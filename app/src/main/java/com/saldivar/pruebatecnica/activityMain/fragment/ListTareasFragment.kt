@@ -1,5 +1,6 @@
 package com.saldivar.pruebatecnica.activityMain.fragment
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,16 +15,10 @@ import com.saldivar.pruebatecnica.activityMain.TareasAdapter
 import com.saldivar.pruebatecnica.activityMain.estadoVisualizadorTareas
 import com.saldivar.pruebatecnica.db.Tareas
 import com.saldivar.pruebatecnica.showDialog
-import kotlinx.android.synthetic.main.fragment_list_tareas.*
 import kotlinx.android.synthetic.main.fragment_list_tareas.view.*
-import kotlinx.android.synthetic.main.item_recyler_tareas.*
 
 
 class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnClickListener {
-    private lateinit var presenter: ListTareasFragmentPresenterInterface
-    private lateinit var recycler: RecyclerView
-    private lateinit var adapter: TareasAdapter
-    private val layoutManager by lazy { LinearLayoutManager(context) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -31,11 +26,13 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnCl
         rootview.flotanButton.setOnClickListener(this)
         presenter = ListTareasFragmentPresenter(this)
         recycler = rootview.recycler_tareas as RecyclerView
-        consultar()
+        consultar(context!!)
         return rootview
     }
-
     companion object {
+        private lateinit var presenter: ListTareasFragmentPresenterInterface
+        private lateinit var recycler: RecyclerView
+        private lateinit var adapter: TareasAdapter
         fun newInstance(): ListTareasFragment = ListTareasFragment()
     }
 
@@ -47,8 +44,13 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnCl
         }
     }
 
-    private fun consultar() {
-        presenter.consultarListTareas(this.activity!!,estadoVisualizadorTareas.ojo)
+    internal fun consultar(context: Context,origenllamada:String ="ListTareasFragment") {
+        if(origenllamada=="ListTareasFragment"){
+            presenter.consultarListTareas(context,estadoVisualizadorTareas.ojo)
+        }else{
+            presenter = ListTareasFragmentPresenter(this)
+            presenter.consultarListTareas(context,estadoVisualizadorTareas.ojo)
+        }
     }
 
     override fun resultadoConsultaListTareas(listaTareas: List<Tareas>) {
@@ -58,7 +60,7 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnCl
         }
         else{
             insertDatosDefecto()
-            consultar()
+            consultar(context!!)
         }
     }
 
@@ -77,17 +79,23 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnCl
         val objectVal3 = Tareas(0,"Tarea de Biologia","Resolver problemas sobre Biologia"
             ,"17/02","22/02",true)
         listObject.add(3,objectVal3)
-        insertarBD(listObject)
+        insertarBD(listObject,context!!)
     }
 
-    private fun insertarBD(listObject: MutableList<Tareas>) {
-        presenter.insertarDatosDefecto(this.activity!!,listObject)
+    internal fun insertarBD(listObject: MutableList<Tareas>,context:Context, origenllamada: String="ListTareasFragment") {
+        if(origenllamada == "ListTareasFragment" ){
+            presenter.insertarDatosDefecto(this.activity!!,listObject)
+        }
+        else{
+            presenter = ListTareasFragmentPresenter(this)
+            presenter.insertarDatosDefecto(context,listObject)
+        }
     }
 
     private fun setRecyclerView(datosTarea: MutableList<TareaObject>) {
         recycler.setHasFixedSize(true)
         recycler.itemAnimator = DefaultItemAnimator()
-        recycler.layoutManager = layoutManager
+        recycler.layoutManager = LinearLayoutManager(context)
         adapter=(TareasAdapter(
             datosTarea,
             object :
@@ -99,29 +107,29 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnCl
                 override fun onDelete(flight: TareaObject, position: Int) {
                 }
 
-                override fun change(flight: TareaObject, position: Int) {
-                    consultarEstado(flight)
+                override fun change(flight: TareaObject, position: Int, context: Context) {
+                    consultarEstado(flight,context)
                 }
 
             }))
         recycler.adapter = adapter
     }
 
-    private fun consultarEstado(flight: TareaObject) {
-        presenter.consultarEstado(flight.id,this.activity!!)
+    private fun consultarEstado(flight: TareaObject,context: Context) {
+        presenter.consultarEstado(flight.id,context)
     }
-    override fun respuestaConsultaEstado(lista: List<Tareas>,id:Int) {
-        val list = MapperListTareas().listTareas(lista)
+    override fun respuestaConsultaEstado(listaTareas: List<Tareas>, id:Int,context: Context) {
+        val list = MapperListTareas().listTareas(listaTareas)
         if (list[0].estado){
-            updateEstado(list[0],false)
+            updateEstado(list[0],context,false)
         }
         else{
-            updateEstado(list[0],true)
+            updateEstado(list[0],context,true)
         }
     }
 
-    private fun updateEstado(flight: TareaObject, estado: Boolean) {
-        presenter.actualizarEstadoTarea(flight.id,this.activity!!,estado)
+    private fun updateEstado(flight: TareaObject,context: Context,estado: Boolean,) {
+        presenter.actualizarEstadoTarea(flight.id,context,estado)
     }
 
     private fun dialog() = LayoutInflater.from(this.activity!!).

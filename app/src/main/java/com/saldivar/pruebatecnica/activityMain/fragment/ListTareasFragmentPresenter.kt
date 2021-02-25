@@ -27,8 +27,8 @@ class ListTareasFragmentPresenter(private val view: ListTareasFragmentViewInterf
         model.actualizarEstadoTarea(id, context, estado)
     }
 
-    override fun respuestaConsultaEstado(listaTareas: List<Tareas>, id: Int) {
-        view.respuestaConsultaEstado(listaTareas,id)
+    override fun respuestaConsultaEstado(listaTareas: List<Tareas>, id: Int,context: Context) {
+        view.respuestaConsultaEstado(listaTareas,id,context)
     }
 
 

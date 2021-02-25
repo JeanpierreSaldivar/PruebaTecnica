@@ -3,17 +3,11 @@ package com.saldivar.pruebatecnica.activityMain
 import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.saldivar.pruebatecnica.R
 import com.saldivar.pruebatecnica.activityMain.fragment.RecyclerTareasListener
 import com.saldivar.pruebatecnica.inflate
-import kotlinx.android.synthetic.main.item_recyler_tareas.*
 import kotlinx.android.synthetic.main.item_recyler_tareas.view.*
-import java.security.AccessController.getContext
 
 class TareasAdapter(private  val flight:List<TareaObject>, private  val listener: RecyclerTareasListener)
     : RecyclerView.Adapter<TareasAdapter.MainViewHolder>()  {
@@ -39,7 +33,7 @@ class TareasAdapter(private  val flight:List<TareaObject>, private  val listener
             }
             item_tarea.setOnClickListener{listener.onClick(tarea,adapterPosition)}
             estado.setOnCheckedChangeListener { _, _ ->
-                listener.change(tarea, adapterPosition)
+                listener.change(tarea, adapterPosition,context)
             }
             /*item_certificacion.setOnClickListener { listener.onClick(certificacion,adapterPosition) */
         }

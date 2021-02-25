@@ -12,5 +12,5 @@ interface ListTareasFragmentPresenterInterface {
     fun consultarEstado(id:Int,context: Context)
     fun actualizarEstadoTarea(id:Int,context: Context,estado:Boolean)
 
-    fun respuestaConsultaEstado(listaTareas:List<Tareas>,id:Int)
+    fun respuestaConsultaEstado(listaTareas:List<Tareas>,id:Int,context: Context)
 }

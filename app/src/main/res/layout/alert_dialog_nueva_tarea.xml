@@ -79,11 +79,14 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/box_edit">
 
-                <EditText
+                <TextView
                     android:id="@+id/finalizaAlert"
                     android:layout_marginHorizontal="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:inputType="date"
+                    android:focusable="false"
+                    android:clickable="true"
                     android:hint="Finaliza (dd/MM/yyyy)"
                     android:singleLine="false"
                     android:textColor="#222020"
@@ -111,7 +114,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
-                    android:id="@+id/botonRojo"
+                    android:id="@+id/butonCancelar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
