@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
 
     private fun iu() {
         visualizador.setOnClickListener(this)
-        /*RoomDB.getDataBase(this).roomDAO().createTableTareas()*/
     }
     private fun openFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().apply {
@@ -33,6 +32,12 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         when(v.id){
           R.id.visualizador->{
               estadoVisualizadorTareas.ojo = !estadoVisualizadorTareas.ojo
+              if (estadoVisualizadorTareas.ojo){
+                  visualizador.background = resources.getDrawable(R.drawable.ic_baseline_visibility_off_24)
+              }
+              else{
+                  visualizador.background = resources.getDrawable(R.drawable.ic_baseline_remove_red_eye_24)
+              }
               openFragment(ListTareasFragment.newInstance())
           }
         }

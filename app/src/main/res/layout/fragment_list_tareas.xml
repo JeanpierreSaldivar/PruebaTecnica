@@ -22,6 +22,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:scaleType="center"
+            app:backgroundTint="#FFC107"
             android:theme="@style/Floating2"
             android:layout_marginBottom="30dp"
             android:layout_marginRight="30dp"

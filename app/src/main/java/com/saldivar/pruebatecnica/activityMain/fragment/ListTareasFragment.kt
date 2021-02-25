@@ -13,11 +13,13 @@ import com.saldivar.pruebatecnica.activityMain.TareaObject
 import com.saldivar.pruebatecnica.activityMain.TareasAdapter
 import com.saldivar.pruebatecnica.activityMain.estadoVisualizadorTareas
 import com.saldivar.pruebatecnica.db.Tareas
+import com.saldivar.pruebatecnica.showDialog
+import kotlinx.android.synthetic.main.fragment_list_tareas.*
 import kotlinx.android.synthetic.main.fragment_list_tareas.view.*
 import kotlinx.android.synthetic.main.item_recyler_tareas.*
 
 
-class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface {
+class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnClickListener {
     private lateinit var presenter: ListTareasFragmentPresenterInterface
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: TareasAdapter
@@ -26,15 +28,23 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val rootview = inflater.inflate(R.layout.fragment_list_tareas, container, false)
+        rootview.flotanButton.setOnClickListener(this)
         presenter = ListTareasFragmentPresenter(this)
         recycler = rootview.recycler_tareas as RecyclerView
         consultar()
-
         return rootview
     }
 
     companion object {
         fun newInstance(): ListTareasFragment = ListTareasFragment()
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id){
+            R.id.flotanButton->{
+                showDialog(dialog(),this.activity!!)
+            }
+        }
     }
 
     private fun consultar() {
@@ -113,5 +123,10 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface {
     private fun updateEstado(flight: TareaObject, estado: Boolean) {
         presenter.actualizarEstadoTarea(flight.id,this.activity!!,estado)
     }
+
+    private fun dialog() = LayoutInflater.from(this.activity!!).
+    inflate(R.layout.alert_dialog_nueva_tarea, this.activity?.findViewById(R.id.alertNuevaTarea))
+
+
 
 }
