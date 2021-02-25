@@ -12,8 +12,7 @@ import kotlinx.android.synthetic.main.item_recyler_tareas.view.*
 class TareasAdapter(private  val flight:List<TareaObject>, private  val listener: RecyclerTareasListener)
     : RecyclerView.Adapter<TareasAdapter.MainViewHolder>()  {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)=(
-            MainViewHolder(parent.inflate(R.layout.item_recyler_tareas))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)=(MainViewHolder(parent.inflate(R.layout.item_recyler_tareas))
             )
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int)= holder.bin(flight[position],listener)

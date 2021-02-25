@@ -7,7 +7,7 @@ import androidx.room.Query
 
 @Dao
 interface RoomDao {
-
+    //Tareas
     @Insert
     fun insertTarea(tarea: Tareas)
 
@@ -22,4 +22,11 @@ interface RoomDao {
 
     @Query("select * from tareas where id=:idEntrega")
     fun consultarEstado(idEntrega:Int):List<Tareas>
+
+    //Comentarios
+    @Insert
+    fun insertComentario(comentario: Comentarios)
+
+    @Query("SELECT * FROM comentarios where id_tarea = :id")
+    fun getAllComentarios(id:Int):List<Comentarios>
 }

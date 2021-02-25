@@ -38,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_baseline_remove_red_eye_24"
                 android:backgroundTint="#fff"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_marginRight="30dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

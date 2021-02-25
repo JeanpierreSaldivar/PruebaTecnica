@@ -1,6 +1,7 @@
 package com.saldivar.pruebatecnica.activityMain.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.saldivar.pruebatecnica.activityDetalleTarea.DatosTareaElegidaDetalle
+import com.saldivar.pruebatecnica.activityDetalleTarea.DetalleTareaActivity
 import com.saldivar.pruebatecnica.R
 import com.saldivar.pruebatecnica.activityMain.TareaObject
 import com.saldivar.pruebatecnica.activityMain.TareasAdapter
@@ -101,7 +104,12 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnCl
             object :
                 RecyclerTareasListener {
                 override fun onClick(flight: TareaObject, position: Int) {
-
+                    setearValores(flight)
+                    startActivity(Intent(context, DetalleTareaActivity::class.java))
+                    activity!!.overridePendingTransition(
+                        R.anim.left_in, R.anim.left_out
+                    )
+                    activity!!.finish()
                 }
 
                 override fun onDelete(flight: TareaObject, position: Int) {
@@ -113,6 +121,14 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnCl
 
             }))
         recycler.adapter = adapter
+    }
+
+    private fun setearValores(flight: TareaObject) {
+        DatosTareaElegidaDetalle.id = flight.id
+        DatosTareaElegidaDetalle.titulo = flight.titulo!!
+        DatosTareaElegidaDetalle.creacion = flight.creacionFecha!!
+        DatosTareaElegidaDetalle.detalle = flight.descripcion!!
+        DatosTareaElegidaDetalle.finalizacion = flight.finalizacionFecha!!
     }
 
     private fun consultarEstado(flight: TareaObject,context: Context) {

@@ -8,7 +8,9 @@ import androidx.room.PrimaryKey
 class Comentarios (
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id_comentario")
-    var id:Int = 0,
+    var idComentario:Int = 0,
+    @ColumnInfo(name = "id_tarea")
+    var idTarea:Int = 0,
     @ColumnInfo(name = "user")
     var user:String?= null,
     @ColumnInfo(name = "comentario")
