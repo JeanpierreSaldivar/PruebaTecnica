@@ -10,10 +10,17 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.textfield.TextInputLayout
+import com.saldivar.pruebatecnica.activityDetalleTarea.DatosTareaElegidaDetalle
+import com.saldivar.pruebatecnica.activityDetalleTarea.DetalleTareaActivity
 import com.saldivar.pruebatecnica.activityMain.fragment.ListTareasFragment
 import com.saldivar.pruebatecnica.activityMain.fragment.ListTareasFragmentPresenter
 import com.saldivar.pruebatecnica.activityMain.fragment.ListTareasFragmentPresenterInterface
 import com.saldivar.pruebatecnica.db.Tareas
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,11 +29,25 @@ fun ViewGroup.inflate(layoutId: Int)= LayoutInflater.from(context).inflate(layou
 
 fun showDialog( mDialogView: View, context: Context) {
     val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
+    val tituloAlert = mDialogView.findViewById(R.id.TituloDialog) as TextView
+    val containerTituloAlert = mDialogView.findViewById(R.id.containerTituloAlert) as TextInputLayout
     val textTitulo = mDialogView.findViewById(R.id.tituloAlert) as EditText
+    val containerContenidoAlert = mDialogView.findViewById(R.id.containerContenidoAlert) as TextInputLayout
     val textContenido= mDialogView.findViewById(R.id.contenidoAlert) as EditText
-    val textFinaliza = mDialogView.findViewById(R.id.finalizaAlert) as TextView
+    val containerFinalizaAlert = mDialogView.findViewById(R.id.containerFinalizaAlert) as TextInputLayout
+    val textFinaliza = mDialogView.findViewById(R.id.finalizaAlert) as EditText
     val aceptar = mDialogView.findViewById(R.id.botonAceptar) as Button
     val cancelar = mDialogView.findViewById(R.id.butonCancelar) as Button
+    if(context is DetalleTareaActivity){
+        tituloAlert.text = "Editar Actividad"
+        containerTituloAlert.hint = "Titulo"
+        textTitulo.setText(DatosTareaElegidaDetalle.titulo)
+        containerContenidoAlert.hint = "Contenido"
+        textContenido.setText(DatosTareaElegidaDetalle.detalle)
+        containerFinalizaAlert.hint = "Finaliza"
+        textFinaliza.setText("${DatosTareaElegidaDetalle.finalizacion}/2021")
+
+    }
     val  mAlertDialog = mBuilder.show()
     val fechaCreacion = fechaActual()
     mAlertDialog.window?.setBackgroundDrawable(null)
@@ -45,7 +66,7 @@ fun showDialog( mDialogView: View, context: Context) {
             }else{
                 mes.toString()
             }
-            textFinaliza.text = "$dayOfMonth/$mesString/$mYear"
+            textFinaliza.setText("$dayOfMonth/$mesString/$mYear")
         },year,month,day)
         dpd.show()
     }
@@ -85,6 +106,17 @@ fun fechaActual():String {
     val today: String = formatter.format(date)
     val partes :List<String> = today.split("/")
     return "${partes[0]}/${partes[1]}"
+}
+
+fun searchAutomaticSaldivar(repetitiveTask:()->Unit,successTask:()->Unit) {
+    CoroutineScope(Dispatchers.Default).async {
+        while (herramientaObservador.comentarioEnProceso.isEmpty() || herramientaObservador.comentarioEnProceso.isBlank()) {
+            delay(1500)
+            repetitiveTask()
+        }
+        herramientaObservador.comentarioEnProceso = ""
+        successTask()
+    }
 }
 
 

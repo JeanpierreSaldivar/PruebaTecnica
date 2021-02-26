@@ -21,7 +21,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/TituloDialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
@@ -46,7 +46,7 @@
                     android:hint="Titulo"
                     android:layout_marginHorizontal="8dp"
                     android:textColor="#222020"
-                    android:textSize="18sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -67,7 +67,7 @@
                     android:singleLine="false"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:textColor="#222020"
-                    android:textSize="18sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -76,10 +76,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/box_edit">
 
-                <TextView
+                <EditText
                     android:id="@+id/finalizaAlert"
                     android:layout_marginHorizontal="8dp"
                     android:layout_width="match_parent"
@@ -90,7 +91,7 @@
                     android:hint="Finaliza (dd/MM/yyyy)"
                     android:singleLine="false"
                     android:textColor="#222020"
-                    android:textSize="18sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
             <androidx.constraintlayout.widget.ConstraintLayout

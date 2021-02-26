@@ -36,7 +36,7 @@ class ListComentariosFragment : Fragment(),ListComentariosFragmentViewInterface 
         return rootview
     }
 
-    private fun consultar(context: Context) {
+    internal fun consultar(context: Context) {
         presenter.getAllComentarios(context,DatosTareaElegidaDetalle.id)
     }
 
