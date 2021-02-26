@@ -80,14 +80,22 @@ fun showDialog( mDialogView: View, context: Context) {
         val textFinalizaSinYear = "${fechaElegida[0]}/${fechaElegida[1]}"
         if (mesActual.toInt()<=mesElegido.toInt()){
             if(diaElegido.toInt()>=diaActual.toInt()){
-                val listObject = mutableListOf<Tareas>()
-                val objectVal0 = Tareas(
-                        0, textTitulo.text.toString(), textContenido.text.toString(),fechaCreacion,
-                        textFinalizaSinYear,false)
-                listObject.add(0,objectVal0)
-                val activity = ListTareasFragment()
-                activity.insertarBD(listObject,context,"ExtensionFunction")
-                activity.consultar(context,"ExtensionFunction")
+                if(context is DetalleTareaActivity){
+                    val activity = DetalleTareaActivity()
+                    activity.updateTarea(textTitulo.text.toString(),textContenido.text.toString(),
+                    textFinalizaSinYear,DatosTareaElegidaDetalle.id,context)
+                    activity.consultarDatosNuevos(context,DatosTareaElegidaDetalle.id)
+                }
+                else{
+                    val listObject = mutableListOf<Tareas>()
+                    val objectVal0 = Tareas(
+                            0, textTitulo.text.toString(), textContenido.text.toString(),fechaCreacion,
+                            textFinalizaSinYear,false)
+                    listObject.add(0,objectVal0)
+                    val activity = ListTareasFragment()
+                    activity.insertarBD(listObject,context,"ExtensionFunction")
+                    activity.consultar(context,"ExtensionFunction")
+                }
                 mAlertDialog.dismiss()
             }else{
                 Toast.makeText(context,"El dia elegido no es valido",Toast.LENGTH_LONG).show()

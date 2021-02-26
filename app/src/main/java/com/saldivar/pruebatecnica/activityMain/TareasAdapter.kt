@@ -22,7 +22,11 @@ class TareasAdapter(private  val flight:List<TareaObject>, private  val listener
     class MainViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         @SuppressLint("SetTextI18n")
         fun bin(tarea: TareaObject, listener: RecyclerTareasListener)= with(itemView){
-            ordenNumero.text = "${"0" + tarea.id.toString() } "
+            if(tarea.id<10){
+                ordenNumero.text = "${"0" + tarea.id.toString()}"
+            }else{
+                ordenNumero.text = "${tarea.id}"
+            }
             titulo.text = tarea.titulo
             descripcion.text = tarea.descripcion
             creacion.text = "Creación: ${tarea.creacionFecha}"
@@ -30,7 +34,7 @@ class TareasAdapter(private  val flight:List<TareaObject>, private  val listener
             if(tarea.estado){
                 estado.isChecked = true
             }
-            item_tarea.setOnClickListener{listener.onClick(tarea,adapterPosition)}
+            item_tarea.setOnClickListener{listener.onClick(tarea,adapterPosition,context)}
             estado.setOnCheckedChangeListener { _, _ ->
                 listener.change(tarea, adapterPosition,context)
             }

@@ -18,8 +18,10 @@ interface RoomDao {
     fun updateEstado(boolean: Boolean,idEntrega:Int)
 
     @Query("select * from tareas where id=:idEntrega")
-    fun consultarEstado(idEntrega:Int):List<Tareas>
+    fun consultarTarea(idEntrega:Int):List<Tareas>
 
+    @Query("UPDATE tareas set titulo=:tituloEnviado, descripcion=:descripcionEnviado,finalizacion=:finalizacionEnviado where id =:idEnviado")
+    fun actualizarTarea(tituloEnviado:String,descripcionEnviado:String,finalizacionEnviado:String,idEnviado:Int)
     //Comentarios
     @Insert
     fun insertComentario(comentario: Comentarios)

@@ -22,7 +22,7 @@ class ListTareasFragmentModel(private  val presenter: ListTareasFragmentPresente
     }
 
     override fun consultarEstado(id: Int, context: Context) {
-        val listaTareas : List<Tareas> =RoomDB.getDataBase(context).roomDAO().consultarEstado(id)
+        val listaTareas : List<Tareas> =RoomDB.getDataBase(context).roomDAO().consultarTarea(id)
         respuestaConsultaEstado(listaTareas,id,context)
     }
 

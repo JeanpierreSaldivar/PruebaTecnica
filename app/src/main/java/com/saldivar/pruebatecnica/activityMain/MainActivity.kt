@@ -1,14 +1,15 @@
 package com.saldivar.pruebatecnica.activityMain
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.saldivar.pruebatecnica.R
+import com.saldivar.pruebatecnica.activityDetalleTarea.DetalleTareaActivity
 import com.saldivar.pruebatecnica.activityMain.fragment.ListTareasFragment
-import com.saldivar.pruebatecnica.db.RoomDB
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_list_tareas.*
 
 class MainActivity : AppCompatActivity(),View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,4 +43,6 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
           }
         }
     }
+
+
 }
