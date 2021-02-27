@@ -9,4 +9,6 @@ interface DetalleTareaActivityPresenterInterface {
     fun actualizarTarea(titulo:String,descripcion:String,finalizacion:String,id:Int,context:Context)
     fun consultarDatosNuevos(context:Context,id:Int)
     fun datosNuevosTareaObtenido(tareaActualizada:List<Tareas>)
+    fun eliminarComentarios(context:Context,id:Int)
+    fun eliminarTarea(context:Context,id:Int)
 }

@@ -44,6 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Titulo"
+                    android:singleLine="true"
                     android:layout_marginHorizontal="8dp"
                     android:textColor="#222020"
                     android:textSize="14sp"

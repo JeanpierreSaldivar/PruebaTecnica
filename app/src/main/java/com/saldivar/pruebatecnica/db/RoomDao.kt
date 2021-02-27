@@ -11,6 +11,9 @@ interface RoomDao {
     @Query("Delete From tareas")
     fun deletTareas()
 
+    @Query("Delete from tareas where id =:idTarea")
+    fun deleteTarea(idTarea:Int)
+
     @Query("SELECT * FROM tareas where estado=:estadoBuscar")
     fun getAllTareas(estadoBuscar:Boolean):List<Tareas>
 
@@ -22,6 +25,7 @@ interface RoomDao {
 
     @Query("UPDATE tareas set titulo=:tituloEnviado, descripcion=:descripcionEnviado,finalizacion=:finalizacionEnviado where id =:idEnviado")
     fun actualizarTarea(tituloEnviado:String,descripcionEnviado:String,finalizacionEnviado:String,idEnviado:Int)
+
     //Comentarios
     @Insert
     fun insertComentario(comentario: Comentarios)
@@ -29,4 +33,6 @@ interface RoomDao {
     @Query("SELECT * FROM comentarios where id_tarea = :id")
     fun getAllComentarios(id:Int):List<Comentarios>
 
+    @Query("Delete from comentarios where id_tarea=:idTarea")
+    fun eliminarComentarios(idTarea:Int)
 }

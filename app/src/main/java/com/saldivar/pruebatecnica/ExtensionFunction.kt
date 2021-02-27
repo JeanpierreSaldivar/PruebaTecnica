@@ -14,8 +14,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.saldivar.pruebatecnica.activityDetalleTarea.DatosTareaElegidaDetalle
 import com.saldivar.pruebatecnica.activityDetalleTarea.DetalleTareaActivity
 import com.saldivar.pruebatecnica.activityMain.fragment.ListTareasFragment
-import com.saldivar.pruebatecnica.activityMain.fragment.ListTareasFragmentPresenter
-import com.saldivar.pruebatecnica.activityMain.fragment.ListTareasFragmentPresenterInterface
 import com.saldivar.pruebatecnica.db.Tareas
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,6 +50,7 @@ fun showDialog( mDialogView: View, context: Context) {
     val fechaCreacion = fechaActual()
     mAlertDialog.window?.setBackgroundDrawable(null)
     textFinaliza.setOnClickListener {
+        OcultarTeclado.hideSoftKeyBoard(context,textFinaliza)
         val c = Calendar.getInstance()
         val day = c.get(Calendar.DAY_OF_MONTH)
         val month = c.get(Calendar.MONTH)
@@ -89,7 +88,7 @@ fun showDialog( mDialogView: View, context: Context) {
                 else{
                     val listObject = mutableListOf<Tareas>()
                     val objectVal0 = Tareas(
-                            0, textTitulo.text.toString(), textContenido.text.toString(),fechaCreacion,
+                            DatosTareaElegidaDetalle.id, textTitulo.text.toString(), textContenido.text.toString(),fechaCreacion,
                             textFinalizaSinYear,false)
                     listObject.add(0,objectVal0)
                     val activity = ListTareasFragment()
@@ -127,4 +126,24 @@ fun searchAutomaticSaldivar(repetitiveTask:()->Unit,successTask:()->Unit) {
     }
 }
 
-
+fun showDialogDelete( mDialogView: View, context: Context){
+    val mBuilder = AlertDialog.Builder(context).setView(mDialogView)
+    val titulo = mDialogView.findViewById(R.id.TituloDialogDelete) as TextView
+    val recordatorio = mDialogView.findViewById(R.id.recordatorioDialogDelete) as TextView
+    val aceptar = mDialogView.findViewById(R.id.botonConfirmar) as Button
+    val cancelar = mDialogView.findViewById(R.id.butonCancelar) as Button
+    val  mAlertDialog = mBuilder.show()
+    mAlertDialog.window?.setBackgroundDrawable(null)
+    titulo.text = "¿Seguro que quieres eliminar ${DatosTareaElegidaDetalle.titulo}?"
+    recordatorio.text = "Recuerda: Se van a borrar todos los comentarios"
+    aceptar.setOnClickListener {
+        val activityDetalle = DetalleTareaActivity()
+        activityDetalle.eliminarComentarios(context,DatosTareaElegidaDetalle.id)
+        activityDetalle.eliminarTarea(context,DatosTareaElegidaDetalle.id)
+        activityDetalle.backActivity(context)
+        mAlertDialog.dismiss()
+    }
+    cancelar.setOnClickListener {
+        mAlertDialog.dismiss()
+    }
+}

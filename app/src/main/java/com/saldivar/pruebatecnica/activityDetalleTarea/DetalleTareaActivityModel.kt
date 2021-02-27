@@ -22,6 +22,14 @@ class DetalleTareaActivityModel(private  val presenter: DetalleTareaActivityPres
         datosNuevosTareaObtenidos(tareaActualizada)
     }
 
+    override fun eliminarComentarios(context: Context, id: Int) {
+        RoomDB.getDataBase(context).roomDAO().eliminarComentarios(id)
+    }
+
+    override fun eliminarTarea(context: Context, id: Int) {
+        RoomDB.getDataBase(context).roomDAO().deleteTarea(id)
+    }
+
     private fun datosNuevosTareaObtenidos(tareaActualizada: List<Tareas>) {
         presenter.datosNuevosTareaObtenido(tareaActualizada)
     }

@@ -71,16 +71,16 @@ class ListTareasFragment : Fragment(), ListTareasFragmentViewInterface,View.OnCl
 
     private fun insertDatosDefecto() {
         val listObject = mutableListOf<Tareas>()
-        val objectVal0 = Tareas(0, "Ejercicio para casa", "Resolver problemas diversos sobre algebra",
+        val objectVal0 = Tareas(1, "Ejercicio para casa", "Resolver problemas diversos sobre algebra",
                 "17/02", "22/02", false)
         listObject.add(0, objectVal0)
-        val objectVal1 = Tareas(0, "Tarea de Química", "Resolver problemas sobre teoremas sobre la" +
+        val objectVal1 = Tareas(2, "Tarea de Química", "Resolver problemas sobre teoremas sobre la" +
                 "tabla periodica", "17/02", "22/02", false)
         listObject.add(1, objectVal1)
-        val objectVal2 = Tareas(0, "Tarea de Matemáticas", "Resolver problemas sobre teoremas de" +
+        val objectVal2 = Tareas(3, "Tarea de Matemáticas", "Resolver problemas sobre teoremas de" +
                 "pitagoras", "17/02", "22/02", false)
         listObject.add(2, objectVal2)
-        val objectVal3 = Tareas(0, "Tarea de Biologia", "Resolver problemas sobre Biologia", "17/02", "22/02", true)
+        val objectVal3 = Tareas(4, "Tarea de Biologia", "Resolver problemas sobre Biologia", "17/02", "22/02", true)
         listObject.add(3, objectVal3)
         insertarBD(listObject, context!!)
     }

@@ -1,5 +1,6 @@
 package com.saldivar.pruebatecnica.activityDetalleTarea
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,14 +8,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.saldivar.pruebatecnica.OcultarTeclado
-import com.saldivar.pruebatecnica.R
+import com.saldivar.pruebatecnica.*
 import com.saldivar.pruebatecnica.activityDetalleTarea.fragment.ListComentariosFragment
 import com.saldivar.pruebatecnica.activityMain.MainActivity
+import com.saldivar.pruebatecnica.activityMain.estadoVisualizadorTareas
 import com.saldivar.pruebatecnica.db.Comentarios
 import com.saldivar.pruebatecnica.db.Tareas
-import com.saldivar.pruebatecnica.herramientaObservador
-import com.saldivar.pruebatecnica.searchAutomaticSaldivar
 import kotlinx.android.synthetic.main.activity_detalle_tarea.*
 
 class DetalleTareaActivity : AppCompatActivity(), View.OnClickListener,
@@ -25,6 +24,7 @@ class DetalleTareaActivity : AppCompatActivity(), View.OnClickListener,
         setContentView(R.layout.activity_detalle_tarea)
         supportActionBar!!.hide()
         iu()
+        estadoVisualizadorTareas.ojo = false
         presenter = DetalleTareaActivityPresenter(this)
         openFragment(ListComentariosFragment.newInstance())
         searchAutomaticSaldivar(::repetitiveTask,::successTask)
@@ -34,15 +34,11 @@ class DetalleTareaActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     override fun onBackPressed() {
-        startActivity(Intent(this@DetalleTareaActivity, MainActivity::class.java))
-            overridePendingTransition(
-            R.anim.right_in, R.anim.right_out
-        )
-        finish()
+        backActivity(this)
     }
     private fun iu() {
         setearDatosVista()
-
+        delete.setOnClickListener(this)
         check.setOnClickListener(this)
         edit.setOnClickListener(this)
     }
@@ -74,9 +70,19 @@ class DetalleTareaActivity : AppCompatActivity(), View.OnClickListener,
             R.id.edit->{
                 com.saldivar.pruebatecnica.showDialog(dialog(),this)
             }
+            R.id.delete->{
+                showDialogDelete(dialogDelete(),this)
+            }
         }
     }
 
+    internal fun eliminarComentarios(context: Context, id: Int) {
+        presenter.eliminarComentarios(context,id)
+    }
+
+    internal fun eliminarTarea(context: Context,id: Int){
+        presenter.eliminarTarea(context,id)
+    }
 
     private fun successTask() {
         check.backgroundTintList = resources.getColorStateList(R.color.teal_700)
@@ -117,5 +123,17 @@ class DetalleTareaActivity : AppCompatActivity(), View.OnClickListener,
         DatosTareaElegidaDetalle.finalizacion = tareaActualizada[0].finalizacion
     }
 
+
+    private fun dialogDelete() = LayoutInflater.from(this).
+    inflate(R.layout.alert_dialog_delete, this.findViewById(R.id.alertDeleteTarea))
+
+    internal fun backActivity(context: Context){
+        val intent = Intent(context, MainActivity::class.java)
+        context.startActivity(intent)
+        (context as Activity).overridePendingTransition(
+                R.anim.right_in, R.anim.right_out
+        )
+        (context as Activity).finish()
+    }
 
 }

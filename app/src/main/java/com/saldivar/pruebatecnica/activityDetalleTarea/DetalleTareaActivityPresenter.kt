@@ -30,4 +30,12 @@ class DetalleTareaActivityPresenter(private val view: DetalleTareaActivityViewIn
     override fun datosNuevosTareaObtenido(tareaActualizada: List<Tareas>) {
         view.datosNuevosTareaObtenido(tareaActualizada)
     }
+
+    override fun eliminarComentarios(context: Context, id: Int) {
+        model.eliminarComentarios(context,id)
+    }
+
+    override fun eliminarTarea(context: Context, id: Int) {
+        model.eliminarTarea(context, id)
+    }
 }

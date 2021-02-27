@@ -44,5 +44,7 @@ class MainActivity : AppCompatActivity(),View.OnClickListener {
         }
     }
 
-
+    override fun onBackPressed() {
+        finish()
+    }
 }
