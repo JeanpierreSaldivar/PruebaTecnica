@@ -8,16 +8,13 @@ interface RoomDao {
     @Insert
     fun insertTarea(tarea: Tareas)
 
-    @Query("Delete From tareas")
-    fun deletTareas()
-
     @Query("Delete from tareas where id =:idTarea")
     fun deleteTarea(idTarea:Int)
 
     @Query("SELECT * FROM tareas where estado=:estadoBuscar")
-    fun getAllTareas(estadoBuscar:Boolean):List<Tareas>
+    fun getAllTareas(estadoBuscar:Boolean):MutableList<Tareas>
 
-    @Query("UPDATE tareas set estado = :boolean  where id=:idEntrega   ")
+    @Query("UPDATE tareas set estado = :boolean  where id=:idEntrega")
     fun updateEstado(boolean: Boolean,idEntrega:Int)
 
     @Query("select * from tareas where id=:idEntrega")
