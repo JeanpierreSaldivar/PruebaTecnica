@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.saldivar.pruebatecnica.*
-import com.saldivar.pruebatecnica.helper.herramientaObservador
 import com.saldivar.pruebatecnica.helper.searchAutomaticSaldivar
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.HomeActivity.View.HomeActivity
@@ -25,7 +24,7 @@ class DetalleTareaActivity : AppCompatActivity(){
     }
 
     override fun onBackPressed() {
-        backActivity(this)
+        backActivity()
     }
 
     private fun successTask() {
@@ -35,7 +34,7 @@ class DetalleTareaActivity : AppCompatActivity(){
 
     private fun repetitiveTask() {
         check.backgroundTintList = resources.getColorStateList(R.color.gris)
-        herramientaObservador.comentarioEnProceso = comentario_new.text.toString()
+        UtilHome.comentarioEnProceso = comentario_new.text.toString()
     }
 
     private fun openFragment(fragment: Fragment){
@@ -44,13 +43,13 @@ class DetalleTareaActivity : AppCompatActivity(){
             addToBackStack(null)
             commit() }}
 
-    private fun backActivity(context: Context){
-        val intent = Intent(context, HomeActivity::class.java)
-        context.startActivity(intent)
-        (context as Activity).overridePendingTransition(
+    private fun backActivity(){
+        val intent = Intent(this@DetalleTareaActivity, HomeActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(
                 R.anim.right_in, R.anim.right_out
         )
-        (context).finish()
+        finish()
     }
 
 }

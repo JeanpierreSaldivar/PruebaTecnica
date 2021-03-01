@@ -86,7 +86,7 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
                 presenter.enviarNuevoComentario(dato,recycler)
                 etNewComentario.setText("")
                 etNewComentario.clearFocus()
-                OcultarTeclado.hideSoftKeyBoard(MyAplicationClass.ctx!!, etNewComentario)
+                UtilHome.hideSoftKeyBoard(MyAplicationClass.ctx!!, etNewComentario)
             }
             R.id.edit->{
                 showDialog(dialog(),recycler)
@@ -125,7 +125,7 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
         mAlertDialog.setCanceledOnTouchOutside(false)
         mAlertDialog.window?.setBackgroundDrawable(null)
         textFinaliza.setOnClickListener {
-            OcultarTeclado.hideSoftKeyBoard(this.activity!!, textFinaliza)
+            UtilHome.hideSoftKeyBoard(this.activity!!, textFinaliza)
             val c = Calendar.getInstance()
             val day = c.get(Calendar.DAY_OF_MONTH)
             val month = c.get(Calendar.MONTH)

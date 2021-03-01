@@ -18,6 +18,7 @@ import com.saldivar.pruebatecnica.db.Tareas
 import com.saldivar.pruebatecnica.helper.*
 import com.saldivar.pruebatecnica.modulo.HomeActivity.mvp.HomeMVP
 import com.saldivar.pruebatecnica.modulo.HomeActivity.presenter.PresenterHome
+import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.detalleTarea.view.DetalleTareaActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list_tareas.view.*
@@ -37,7 +38,7 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         rootview.flotanButton.setOnClickListener(this)
         activity!!.visualizador.setOnClickListener(this)
         presenter = PresenterHome(this)
-        recycler = rootview.recycler_tareas as RecyclerView
+        recycler = rootview.findViewById(R.id.recycler_tareas)
         consultar()
         return rootview
     }
@@ -57,12 +58,8 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         }
     }
 
-    internal fun consultar() {
+    private fun consultar() {
         presenter.consultarListTareas(recycler)
-    }
-
-    internal fun insertarDatosNuevaTarea(nuevaTarea:Tareas){
-        presenter.insertarNuevaTarea(nuevaTarea)
     }
 
     private fun dialog() = LayoutInflater.from(this.activity!!).
@@ -75,8 +72,6 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
             R.anim.left_in, R.anim.left_out)
     }
 
-    override fun showToask(message: String) {
-        Toast.makeText(MyAplicationClass.ctx, message, Toast.LENGTH_SHORT).show()}
 
 
 
@@ -91,7 +86,7 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         mAlertDialog.setCanceledOnTouchOutside(false)
         mAlertDialog.window?.setBackgroundDrawable(null)
         textFinaliza.setOnClickListener {
-            OcultarTeclado.hideSoftKeyBoard(this.activity!!, textFinaliza)
+            UtilHome.hideSoftKeyBoard(this.activity!!, textFinaliza)
             val c = Calendar.getInstance()
             val day = c.get(Calendar.DAY_OF_MONTH)
             val month = c.get(Calendar.MONTH)

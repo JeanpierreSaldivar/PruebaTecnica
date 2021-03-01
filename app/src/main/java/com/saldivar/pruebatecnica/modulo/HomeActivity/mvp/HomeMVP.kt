@@ -25,7 +25,6 @@ interface HomeMVP {
     }
     interface View{
         fun nextActivity()
-        fun showToask(message:String)
     }
 
 

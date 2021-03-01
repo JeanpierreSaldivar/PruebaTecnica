@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import com.saldivar.pruebatecnica.R
+import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -30,11 +31,11 @@ fun fechaActual():String {
 
 fun searchAutomaticSaldivar(repetitiveTask:()->Unit,successTask:()->Unit) {
     CoroutineScope(Dispatchers.Default).async {
-        while (herramientaObservador.comentarioEnProceso.isEmpty() || herramientaObservador.comentarioEnProceso.isBlank()) {
+        while (UtilHome.comentarioEnProceso.isEmpty() || UtilHome.comentarioEnProceso.isBlank()) {
             delay(1500)
             repetitiveTask()
         }
-        herramientaObservador.comentarioEnProceso = ""
+        UtilHome.comentarioEnProceso = ""
         successTask()
     }
 }

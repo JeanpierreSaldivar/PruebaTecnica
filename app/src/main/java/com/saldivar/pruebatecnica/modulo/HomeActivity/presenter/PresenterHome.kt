@@ -34,10 +34,15 @@ class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
             listaObtenida.isEmpty() && !pref.getBoolean("inicio",false) ->{
                 val mutableList = insertDatosDefecto()
                 model.insertarListaTareasDefectoBD(mutableList)
-                ordenarMostrarTareas(listaObtenida,recyclerView)
+                val listaTareas=model.consultarListaTareas()
+                ordenarMostrarTareas(listaTareas,recyclerView)
                 val edit = pref.edit()
                 edit.putBoolean("inicio",true)
                 edit.apply()
+            }
+            listaObtenida.isEmpty() && pref.getBoolean("inicio",false)->{
+                toastMessage("No hay tareas disponibles")
+                ordenarMostrarTareas(listaObtenida,recyclerView)
             }
             else->{
                 ordenarMostrarTareas(listaObtenida,recyclerView)
@@ -58,14 +63,14 @@ class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
     override fun validacion(titulo:String,contenido:String,fecha:String,mAlertDialog:androidx.appcompat.app.AlertDialog,
     recyclerView: RecyclerView) {
         if(titulo.isEmpty() || titulo.isBlank()){
-            view.showToask("Ingrese el titulo de la tarea")
+            toastMessage("Ingrese el titulo de la tarea")
         }else{
             if (contenido.isEmpty() || contenido.isBlank()){
-                view.showToask("Ingrese el contenido de la tarea")
+                toastMessage("Ingrese el contenido de la tarea")
             }
             else{
                 if(fecha.isEmpty() || fecha.isBlank()){
-                    view.showToask("Ingrese la fecha de la tarea")
+                    toastMessage("Ingrese la fecha de la tarea")
                 }
                 else{
                     val fechaCreacion = fechaActual()
@@ -85,11 +90,11 @@ class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
                                 insertar(titulo,contenido,fechaCreacion,textFinalizaSinYear,recyclerView,mAlertDialog)
                             }
                             else->{
-                                view.showToask("El dia elegido no es valido")
+                                toastMessage("El dia elegido no es valido")
                             }
                         }
                     }else{
-                        view.showToask("El mes elegido no es valido")
+                        toastMessage("El mes elegido no es valido")
                     }
                 }
             }
