@@ -66,10 +66,11 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
     inflate(R.layout.alert_dialog_nueva_tarea,this.activity!!.findViewById(R.id.alertNuevaTarea))
 
     override fun nextActivity() {
-        val intent = Intent(context, DetalleTareaActivity::class.java)
-        context!!.startActivity(intent)
-        (context as Activity).overridePendingTransition(
+        val intent = Intent(this.activity, DetalleTareaActivity::class.java)
+        this.activity!!.startActivity(intent)
+        this.activity!!.overridePendingTransition(
             R.anim.left_in, R.anim.left_out)
+        this.activity!!.finish()
     }
 
 
@@ -105,10 +106,7 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
             dpd.show()
         }
         aceptar.setOnClickListener {
-            val titulo = textTitulo.text.toString()
-            val contenido = textContenido.text.toString()
-            val fecha = textFinaliza.text.toString()
-           presenter.validacion(titulo,contenido,fecha,mAlertDialog,recyclerView)
+           presenter.validacion(textTitulo,textContenido,textFinaliza,mAlertDialog,recyclerView)
 
         }
         cancelar.setOnClickListener { mAlertDialog.dismiss() }

@@ -1,6 +1,7 @@
 package com.saldivar.pruebatecnica.modulo.detalleTarea.mvp
 
 import android.content.Context
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.saldivar.pruebatecnica.db.Comentarios
@@ -10,7 +11,8 @@ interface DetalleTareaMVP {
     interface Presenter{
             fun getAllComentarios(recyclerView: RecyclerView)
             fun enviarNuevoComentario(comentario:String,recyclerView: RecyclerView)
-            fun validacion(titulo:String,contenido:String,fecha:String,mAlertDialog:AlertDialog,recyclerView:RecyclerView)
+            fun validacion(titulo:EditText,contenido:EditText,fecha:EditText,mAlertDialog:AlertDialog,recyclerView:RecyclerView)
+
             fun eliminarComentarios()
             fun eliminarTarea()
     }

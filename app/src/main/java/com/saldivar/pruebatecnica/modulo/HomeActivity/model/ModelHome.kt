@@ -29,4 +29,9 @@ class ModelHome(private val presenter: PresenterHome): HomeMVP.Model{
         InstanciaBD.dbRoom.insertTarea(nuevaTarea)
     }
 
+    override fun consultarUltimaTareaInsertada(): List<Tareas> {
+        return InstanciaBD.dbRoom.consultarUltimaTarea()
+    }
+
+
 }

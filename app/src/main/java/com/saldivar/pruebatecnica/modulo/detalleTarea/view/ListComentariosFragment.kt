@@ -144,10 +144,7 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
             dpd.show()
         }
         aceptar.setOnClickListener {
-            val titulo = textTitulo.text.toString()
-            val contenido = textContenido.text.toString()
-            val fecha = textFinaliza.text.toString()
-            presenter.validacion(titulo,contenido,fecha,mAlertDialog,recyclerView)
+            presenter.validacion(textTitulo,textContenido,textFinaliza,mAlertDialog,recyclerView)
         }
         cancelar.setOnClickListener { mAlertDialog.dismiss() }
     }

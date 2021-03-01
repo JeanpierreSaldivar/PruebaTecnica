@@ -1,6 +1,7 @@
 package com.saldivar.pruebatecnica.modulo.HomeActivity.presenter
 
 import android.graphics.drawable.Drawable
+import android.widget.EditText
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -60,34 +61,37 @@ class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
         model.insertarNuevaTarea(nuevaTarea)
     }
 
-    override fun validacion(titulo:String,contenido:String,fecha:String,mAlertDialog:androidx.appcompat.app.AlertDialog,
+    override fun validacion(titulo:EditText,contenido:EditText,fecha:EditText,mAlertDialog:androidx.appcompat.app.AlertDialog,
     recyclerView: RecyclerView) {
-        if(titulo.isEmpty() || titulo.isBlank()){
+        if(titulo.text.toString().isEmpty() || titulo.text.toString().isBlank()){
             toastMessage("Ingrese el titulo de la tarea")
+            titulo.text.clear()
         }else{
-            if (contenido.isEmpty() || contenido.isBlank()){
+            if (contenido.text.toString().isEmpty() || contenido.text.toString().isBlank()){
                 toastMessage("Ingrese el contenido de la tarea")
+                contenido.text.clear()
             }
             else{
-                if(fecha.isEmpty() || fecha.isBlank()){
+                if(fecha.text.toString().isEmpty() || fecha.text.toString().isBlank()){
                     toastMessage("Ingrese la fecha de la tarea")
+                    fecha.text.clear()
                 }
                 else{
                     val fechaCreacion = fechaActual()
                     val fechaActual:List<String> = fechaCreacion.split("/")
                     val diaActual = fechaActual[0]
                     val mesActual = fechaActual[1]
-                    val fechaElegida:List<String> = fecha.split("/")
+                    val fechaElegida:List<String> = fecha.text.toString().split("/")
                     val diaElegido = fechaElegida[0]
                     val mesElegido = fechaElegida[1]
                     val textFinalizaSinYear = "${fechaElegida[0]}/${fechaElegida[1]}"
                     if (mesActual.toInt()<=mesElegido.toInt()){
                         when{
                             mesActual.toInt() == mesElegido.toInt() && diaElegido.toInt()>=diaActual.toInt()->{
-                                insertar(titulo,contenido,fechaCreacion,textFinalizaSinYear,recyclerView,mAlertDialog)
+                                insertar(titulo.text.toString(),contenido.text.toString(),fechaCreacion,textFinalizaSinYear,recyclerView,mAlertDialog)
                             }
                             mesActual.toInt() < mesElegido.toInt()->{
-                                insertar(titulo,contenido,fechaCreacion,textFinalizaSinYear,recyclerView,mAlertDialog)
+                                insertar(titulo.text.toString(),contenido.text.toString(),fechaCreacion,textFinalizaSinYear,recyclerView,mAlertDialog)
                             }
                             else->{
                                 toastMessage("El dia elegido no es valido")
@@ -107,6 +111,13 @@ class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
                 textFinalizaSinYear,false)
         model.insertarNuevaTarea(objectVal0)
         val listaTareas = model.consultarListaTareas()
+        /*val listaTareas = model.consultarListaTareas()
+        model.insertarNuevaTarea(objectVal0)
+        val ultimaTarea =model.consultarUltimaTareaInsertada()
+        listaTareas.add(ultimaTarea[0])
+        val listaOrdenada =MapperListaTareas().ordenarTareasDeMayorMenor(listaTareas)
+        recyclerView.adapter.setList
+        recyclerView.adapter!!.notifyItemInserted(0)*/
         ordenarMostrarTareas(listaTareas,recyclerView)
         mAlertDialog.dismiss()
     }

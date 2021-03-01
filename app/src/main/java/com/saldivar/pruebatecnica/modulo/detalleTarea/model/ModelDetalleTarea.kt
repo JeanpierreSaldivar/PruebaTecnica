@@ -29,7 +29,6 @@ class ModelDetalleTarea(private val presenter: PresenterDetalleTarea):DetalleTar
 
     override fun consultarDatosNuevosTarea(id: Int):List<Tareas> {
         return InstanciaBD.dbRoom.consultarTarea(id)
-
     }
 
     override fun eliminarComentarios(id: Int) {

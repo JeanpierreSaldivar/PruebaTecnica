@@ -5,6 +5,9 @@ import androidx.room.*
 @Dao
 interface RoomDao {
     //Tareas
+    @Query ("SELECT * FROM tareas WHERE ID = (SELECT MAX(ID) FROM tareas) ")
+    fun consultarUltimaTarea():List<Tareas>
+
     @Insert
     fun insertTarea(tarea: Tareas)
 

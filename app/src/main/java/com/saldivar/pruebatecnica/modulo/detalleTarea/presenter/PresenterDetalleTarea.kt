@@ -1,5 +1,6 @@
 package com.saldivar.pruebatecnica.modulo.detalleTarea.presenter
 
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,34 +35,35 @@ class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTare
                     "anonimus",comentario)
             model.insertarComentarioBD(objectComentario)
             consultar(recyclerView)
-        }else{
-            toastMessage("Comentario no valido")
         }
     }
 
-    override fun validacion(titulo:String,contenido:String,fecha:String,mAlertDialog:AlertDialog,recyclerView:RecyclerView) {
-        if(titulo.isEmpty() || titulo.isBlank()){
+    override fun validacion(titulo:EditText,contenido:EditText,fecha:EditText,mAlertDialog:AlertDialog,recyclerView:RecyclerView) {
+        if(titulo.text.toString().isEmpty() || titulo.text.toString().isBlank()){
             toastMessage("Ingrese el titulo de la tarea")
+            titulo.text.clear()
         }else{
-            if (contenido.isEmpty() || contenido.isBlank()){
+            if (contenido.text.toString().isEmpty() ||contenido.text.toString().isBlank()){
                 toastMessage("Ingrese el contenido de la tarea")
+                contenido.text.clear()
             }
             else{
-                if(fecha.isEmpty() || fecha.isBlank()){
+                if(fecha.text.toString().isEmpty() || fecha.text.toString().isBlank()){
                     toastMessage("Ingrese la fecha de la tarea")
+                    fecha.text.clear()
                 }
                 else{
                     val fechaCreacion = fechaActual()
                     val fechaActual:List<String> = fechaCreacion.split("/")
                     val diaActual = fechaActual[0]
                     val mesActual = fechaActual[1]
-                    val fechaElegida:List<String> = fecha.split("/")
+                    val fechaElegida:List<String> = fecha.text.toString().split("/")
                     val diaElegido = fechaElegida[0]
                     val mesElegido = fechaElegida[1]
                     val textFinalizaSinYear = "${fechaElegida[0]}/${fechaElegida[1]}"
                     if (mesActual.toInt()<=mesElegido.toInt()){
                         if(diaElegido.toInt()>=diaActual.toInt()){
-                            model.updateTarea(titulo,contenido, textFinalizaSinYear, UtilHome.id)
+                            model.updateTarea(titulo.text.toString(),contenido.text.toString(), textFinalizaSinYear, UtilHome.id)
                             val tareaActualizada= model.consultarDatosNuevosTarea(UtilHome.id)
                             setearDatosVista(tareaActualizada)
                             mAlertDialog.dismiss()
