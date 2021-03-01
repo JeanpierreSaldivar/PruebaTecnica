@@ -4,9 +4,9 @@ import com.saldivar.pruebatecnica.db.InstanciaBD
 import com.saldivar.pruebatecnica.db.Tareas
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.HomeActivity.mvp.HomeMVP
-import com.saldivar.pruebatecnica.modulo.HomeActivity.presenter.PresenterHomeActivity
+import com.saldivar.pruebatecnica.modulo.HomeActivity.presenter.PresenterHome
 
-class ModelHomeActivity(private val presenter: PresenterHomeActivity): HomeMVP.Model{
+class ModelHome(private val presenter: PresenterHome): HomeMVP.Model{
     override fun insertarListaTareasDefectoBD(mutableList: MutableList<Tareas>) {
         for (i in 0 until mutableList.size){
             InstanciaBD.dbRoom.insertTarea(mutableList[i])
@@ -23,6 +23,10 @@ class ModelHomeActivity(private val presenter: PresenterHomeActivity): HomeMVP.M
 
     override fun updateEstado(tarea: Tareas, valorActulizar: Boolean) {
         InstanciaBD.dbRoom.updateEstado(valorActulizar,tarea.id)
+    }
+
+    override fun insertarNuevaTarea(nuevaTarea: Tareas) {
+        InstanciaBD.dbRoom.insertTarea(nuevaTarea)
     }
 
 }

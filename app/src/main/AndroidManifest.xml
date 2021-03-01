@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PruebaTecnica">
-        <activity android:name=".modulo.detalleTarea.DetalleTareaActivity"
+        <activity android:name=".modulo.detalleTarea.view.DetalleTareaActivity"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".modulo.HomeActivity.View.HomeActivity"
             android:screenOrientation="portrait">

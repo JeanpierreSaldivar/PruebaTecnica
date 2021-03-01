@@ -1,0 +1,56 @@
+package com.saldivar.pruebatecnica.modulo.detalleTarea.view
+
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import com.saldivar.pruebatecnica.*
+import com.saldivar.pruebatecnica.helper.herramientaObservador
+import com.saldivar.pruebatecnica.helper.searchAutomaticSaldivar
+import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
+import com.saldivar.pruebatecnica.modulo.HomeActivity.View.HomeActivity
+import kotlinx.android.synthetic.main.activity_detalle_tarea.*
+
+class DetalleTareaActivity : AppCompatActivity(){
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_detalle_tarea)
+        supportActionBar!!.hide()
+        UtilHome.ojo = false
+        openFragment(ListComentariosFragment.newInstance())
+        searchAutomaticSaldivar(::repetitiveTask,::successTask)
+    }
+
+    override fun onBackPressed() {
+        backActivity(this)
+    }
+
+    private fun successTask() {
+        check.backgroundTintList = resources.getColorStateList(R.color.teal_700)
+        searchAutomaticSaldivar(::repetitiveTask,::successTask)
+    }
+
+    private fun repetitiveTask() {
+        check.backgroundTintList = resources.getColorStateList(R.color.gris)
+        herramientaObservador.comentarioEnProceso = comentario_new.text.toString()
+    }
+
+    private fun openFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.container_comentarios,fragment)
+            addToBackStack(null)
+            commit() }}
+
+    private fun backActivity(context: Context){
+        val intent = Intent(context, HomeActivity::class.java)
+        context.startActivity(intent)
+        (context as Activity).overridePendingTransition(
+                R.anim.right_in, R.anim.right_out
+        )
+        (context).finish()
+    }
+
+}

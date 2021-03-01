@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".modulo.ListComentariosFragment">
+    tools:context=".modulo.detalleTarea.view.ListComentariosFragment">
     <androidx.recyclerview.widget.RecyclerView
         android:layout_margin="10dp"
         android:id="@+id/recycler_comentarios"
