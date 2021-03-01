@@ -1,22 +1,11 @@
 package com.saldivar.pruebatecnica.helper
 
-import android.app.DatePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import com.google.android.material.textfield.TextInputLayout
-import com.saldivar.pruebatecnica.MyAplicationClass
 import com.saldivar.pruebatecnica.R
-import com.saldivar.pruebatecnica.modulo.detalleTarea.view.DetalleTareaActivity
-import com.saldivar.pruebatecnica.modulo.HomeActivity.View.ListTareasFragment
-import com.saldivar.pruebatecnica.db.Tareas
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

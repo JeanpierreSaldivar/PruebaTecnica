@@ -1,4 +1,4 @@
-package com.saldivar.pruebatecnica.helper
+package com.saldivar.pruebatecnica.modulo.detalleTarea.util
 
 import android.annotation.SuppressLint
 import android.view.View
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.saldivar.pruebatecnica.R
 import com.saldivar.pruebatecnica.db.Comentarios
+import com.saldivar.pruebatecnica.helper.inflate
 import kotlinx.android.synthetic.main.item_recycler_comentarios.view.*
 
 class ComentariosAdapter(private  val flight:List<Comentarios>)

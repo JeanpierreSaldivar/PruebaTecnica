@@ -1,8 +1,6 @@
 package com.saldivar.pruebatecnica.modulo.detalleTarea.view
 
-import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,9 +13,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
-import com.saldivar.pruebatecnica.MyAplicationClass
+import com.saldivar.pruebatecnica.helper.MyAplicationClass
 import com.saldivar.pruebatecnica.R
-import com.saldivar.pruebatecnica.db.Tareas
 import com.saldivar.pruebatecnica.helper.*
 import com.saldivar.pruebatecnica.modulo.HomeActivity.View.HomeActivity
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome

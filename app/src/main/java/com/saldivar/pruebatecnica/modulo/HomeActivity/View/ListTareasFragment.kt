@@ -12,8 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.textfield.TextInputLayout
-import com.saldivar.pruebatecnica.MyAplicationClass
+import com.saldivar.pruebatecnica.helper.MyAplicationClass
 import com.saldivar.pruebatecnica.R
 import com.saldivar.pruebatecnica.db.Tareas
 import com.saldivar.pruebatecnica.helper.*

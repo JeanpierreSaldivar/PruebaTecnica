@@ -4,26 +4,23 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.saldivar.pruebatecnica.MyAplicationClass
+import com.saldivar.pruebatecnica.helper.MyAplicationClass
 import com.saldivar.pruebatecnica.db.Comentarios
 import com.saldivar.pruebatecnica.db.Tareas
-import com.saldivar.pruebatecnica.helper.ComentariosAdapter
-import com.saldivar.pruebatecnica.helper.OcultarTeclado
+import com.saldivar.pruebatecnica.modulo.detalleTarea.util.ComentariosAdapter
 import com.saldivar.pruebatecnica.helper.fechaActual
 import com.saldivar.pruebatecnica.helper.toastMessage
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.detalleTarea.model.ModelDetalleTarea
 import com.saldivar.pruebatecnica.modulo.detalleTarea.mvp.DetalleTareaMVP
-import com.saldivar.pruebatecnica.modulo.detalleTarea.view.DetalleTareaActivity
-import com.saldivar.pruebatecnica.modulo.detalleTarea.view.ListComentariosFragment
-import kotlinx.android.synthetic.main.activity_detalle_tarea.*
+import com.saldivar.pruebatecnica.modulo.detalleTarea.util.MapperOrdenarComentarios
 
 class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTareaMVP.Presenter{
     private val model = ModelDetalleTarea(this)
     override fun getAllComentarios(recyclerView: RecyclerView) {
         val listaComentarios = model.getAllComentarios()
         if(listaComentarios.isNotEmpty()){
-            setRecyclerView(listaComentarios,recyclerView)
+            ordenarMostrarComentarios(listaComentarios,recyclerView)
         }
         else{
             insertDatosDefecto()
@@ -32,11 +29,13 @@ class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTare
     }
 
     override fun enviarNuevoComentario(comentario: String,recyclerView: RecyclerView) {
-        if(comentario.isNotEmpty()){
+        if(comentario.isNotEmpty() && comentario.isNotBlank()){
             val objectComentario = Comentarios(0, UtilHome.id,
                     "anonimus",comentario)
             model.insertarComentarioBD(objectComentario)
             consultar(recyclerView)
+        }else{
+            toastMessage("Comentario no valido")
         }
     }
 
@@ -100,9 +99,13 @@ class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTare
 
     private fun consultar(recyclerView:RecyclerView) {
         val listaComentarios = model.getAllComentarios()
-        setRecyclerView(listaComentarios,recyclerView)
+        ordenarMostrarComentarios(listaComentarios,recyclerView)
     }
 
+    private fun ordenarMostrarComentarios(listaObtenida: List<Comentarios>, recyclerView: RecyclerView) {
+        val listaOrdenada =MapperOrdenarComentarios().ordenarComentariosDeMayorMenor(listaObtenida)
+        setRecyclerView(listaOrdenada,recyclerView)
+    }
     private fun setRecyclerView(datosComentario: List<Comentarios>, recycler: RecyclerView) {
         view.cantidadComentarios("Comentarios (${datosComentario.size})")
         recycler.setHasFixedSize(true)

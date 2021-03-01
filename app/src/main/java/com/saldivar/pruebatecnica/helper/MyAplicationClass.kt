@@ -1,8 +1,7 @@
-package com.saldivar.pruebatecnica
+package com.saldivar.pruebatecnica.helper
 
 import android.app.Application
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 
 class MyAplicationClass : Application() {
 
