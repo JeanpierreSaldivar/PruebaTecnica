@@ -9,25 +9,21 @@ import com.saldivar.pruebatecnica.db.Tareas
 
 interface DetalleTareaMVP {
     interface Presenter{
-            fun getAllComentarios(recyclerView: RecyclerView)
-            fun enviarNuevoComentario(comentario:String,recyclerView: RecyclerView)
-            fun validacion(titulo:EditText,contenido:EditText,fecha:EditText,mAlertDialog:AlertDialog,recyclerView:RecyclerView)
-
-            fun eliminarComentarios()
-            fun eliminarTarea()
+            fun getAllComentarios(idTarea: Int)
+            fun enviarNuevoComentario(comentario:String,idTarea:Int)
+            fun validacion(titulo:String,contenido:String,fecha:String,idTarea: Int):String
+            fun eliminarComentarios(idTarea:Int)
     }
 
     interface Model{
-        fun getAllComentarios():List<Comentarios>
-        fun insertarDatosDefecto(listObject: MutableList<Comentarios>)
+        fun getAllComentarios(idTarea: Int):List<Comentarios>
         fun insertarComentarioBD(comentarioNuevo:Comentarios)
         fun updateTarea(titulo: String, descripcion: String, finalizacion: String, id: Int)
         fun consultarDatosNuevosTarea(id:Int):Tareas
         fun eliminarComentarios(id:Int)
-        fun eliminarTarea(id:Int)
     }
     interface View{
-        fun cantidadComentarios(cantidadComentarios: String)
-        fun setearDatosVista()
+        fun setRecyclerView(datosComentario: MutableList<Comentarios>)
+        fun setearDatosVista(nuevosDatos:Tareas)
     }
 }

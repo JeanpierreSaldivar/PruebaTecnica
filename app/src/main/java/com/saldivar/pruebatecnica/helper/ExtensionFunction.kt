@@ -1,12 +1,11 @@
 package com.saldivar.pruebatecnica.helper
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import com.saldivar.pruebatecnica.R
-import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -31,12 +30,23 @@ fun fechaActual():String {
 
 fun searchAutomaticSaldivar(repetitiveTask:()->Unit,successTask:()->Unit) {
     CoroutineScope(Dispatchers.Default).async {
-        while (UtilHome.comentarioEnProceso.isEmpty() || UtilHome.comentarioEnProceso.isBlank()) {
+        while (Animation.comentarioEnProgreso.isEmpty() || Animation.comentarioEnProgreso.isBlank()) {
             delay(1500)
-            repetitiveTask()
+             repetitiveTask()
         }
-        UtilHome.comentarioEnProceso = ""
+        Animation.comentarioEnProgreso =""
         successTask()
     }
+}
+
+fun hideSoftKeyBoard(context: Context, view: View) {
+    try {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    } catch (e: Exception) {
+        // TODO: handle exception
+        e.printStackTrace()
+    }
+
 }
 

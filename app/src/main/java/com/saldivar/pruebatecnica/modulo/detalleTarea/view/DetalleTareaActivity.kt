@@ -1,14 +1,12 @@
 package com.saldivar.pruebatecnica.modulo.detalleTarea.view
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.saldivar.pruebatecnica.*
+import com.saldivar.pruebatecnica.helper.Animation
 import com.saldivar.pruebatecnica.helper.searchAutomaticSaldivar
-import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.HomeActivity.View.HomeActivity
 import kotlinx.android.synthetic.main.activity_detalle_tarea.*
 
@@ -18,7 +16,6 @@ class DetalleTareaActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detalle_tarea)
         supportActionBar!!.hide()
-        UtilHome.ojo = false
         openFragment(ListComentariosFragment.newInstance())
         searchAutomaticSaldivar(::repetitiveTask,::successTask)
     }
@@ -34,7 +31,7 @@ class DetalleTareaActivity : AppCompatActivity(){
 
     private fun repetitiveTask() {
         check.backgroundTintList = resources.getColorStateList(R.color.gris)
-        UtilHome.comentarioEnProceso = comentario_new.text.toString()
+        Animation.comentarioEnProgreso= comentario_new.text.toString()
     }
 
     private fun openFragment(fragment: Fragment){

@@ -18,12 +18,14 @@ interface HomeMVP {
         fun updateEstado(tarea:Tareas, valorActulizar:Boolean)
         fun  insertarNuevaTarea(nuevaTarea:Tareas)
         fun consultarUltimaTareaInsertada():Tareas
+        fun eliminarTarea(idTarea: Int)
     }
     interface Presenter{
-        fun consultarListTareas(estadoOjo:Boolean)
+        fun consultarListTareas(estadoOjo:Boolean):MutableList<Tareas>
         fun insertarNuevaTarea(nuevaTarea:Tareas)
-        fun validacion(titulo:EditText,contenido:EditText,fecha:EditText,estadoOjo: Boolean)
+        fun validacion(titulo:String,contenido:String,fecha:String):String
         fun consultaEstadoTarea(tareaID:Int)
+        fun eliminarTarea(idTarea:Int)
     }
     interface View{
         fun mostrarEnRecycler(list:MutableList<Tareas>)

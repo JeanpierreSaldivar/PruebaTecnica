@@ -1,6 +1,5 @@
 package com.saldivar.pruebatecnica.modulo.HomeActivity.View
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
@@ -22,11 +21,9 @@ import com.saldivar.pruebatecnica.modulo.HomeActivity.mvp.HomeMVP
 import com.saldivar.pruebatecnica.modulo.HomeActivity.presenter.PresenterHome
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.RecyclerTareasListener
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.TareasAdapter
-import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.detalleTarea.view.DetalleTareaActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list_tareas.view.*
-import kotlinx.android.synthetic.main.item_recyler_tareas.*
 import java.util.*
 
 
@@ -36,7 +33,9 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
     private lateinit var visualizadorOjo: ImageView
     private  lateinit var floatingBtn:FloatingActionButton
     private lateinit var adapter:TareasAdapter
+    private var bundle: Bundle ?=null
     private var estadoOjo = false
+    private var listTareas = mutableListOf<Tareas>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val rootview = inflater.inflate(R.layout.fragment_list_tareas, container, false)
@@ -46,9 +45,34 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         activity!!.visualizador.setOnClickListener(this)
         presenter = PresenterHome(this)
         recycler = rootview.findViewById(R.id.recycler_tareas)
-        consultar(estadoOjo)
+        bundle = activity!!.intent.extras
+        inicio()
         return rootview
     }
+
+    private fun inicio() {
+        consultar()
+        eliminarTarea()
+    }
+
+    private fun eliminarTarea() {
+        if(bundle?.getString("eliminar","NO") =="SI"){
+            presenter.eliminarTarea(bundle?.getInt("idTarea")!!)
+            val positionTarea = bundle?.getInt("position")
+            mostrarEnRecyclerDelete(positionTarea!!)
+            if (listTareas.size==1){
+                toastMessage("No hay tareas disponibles")
+            }
+        }
+    }
+
+    private fun mostrarEnRecyclerDelete(position: Int) {
+        recycler.setHasFixedSize(true)
+        recycler.itemAnimator = DefaultItemAnimator()
+        recycler.layoutManager = LinearLayoutManager(MyAplicationClass.ctx)
+        adapter.removeItem(position)
+    }
+
     companion object {
         fun newInstance(): ListTareasFragment = ListTareasFragment()
     }
@@ -63,7 +87,7 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
                     estadoOjo= true
                     visualizadorOjo.background = resources.getDrawable(R.drawable.ic_baseline_visibility_off_24)
                 }
-                consultar(estadoOjo)
+                consultar()
             }
             R.id.flotanButton -> {
                 showDialogFragment(estadoOjo)
@@ -71,8 +95,9 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         }
     }
 
-    private fun consultar(estadoOjo:Boolean) {
-        presenter.consultarListTareas(estadoOjo)
+    private fun consultar() {
+        listTareas=presenter.consultarListTareas(estadoOjo)
+
     }
 
     override fun mostrarEnRecycler(list: MutableList<Tareas>) {
@@ -82,9 +107,8 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         adapter =TareasAdapter(object:
             RecyclerTareasListener{
             override fun onClick(tarea: Tareas, position: Int) {
-                nextActivity(tarea)
+                nextActivity(tarea,position)
             }
-
             override fun change(tarea: Tareas, position: Int) {
                 presenter.consultaEstadoTarea(tarea.id)
             }
@@ -101,15 +125,16 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         adapter.addItem(0,ultimaTarea)
     }
 
-    fun nextActivity(tarea:Tareas) {
+    private fun nextActivity(tarea:Tareas,position:Int) {
         val bundle = Bundle()
-        bundle.putString("tareaID",tarea.id.toString())
+        bundle.putInt("tareaID",tarea.id)
         bundle.putString("tareaTitulo",tarea.titulo)
         bundle.putString("tareaDetalle",tarea.descripcion)
         bundle.putString("tareaCreacion",tarea.creacion)
         bundle.putString("tareaFinalizacion",tarea.finalizacion)
+        bundle.putInt("position",position)
         val intent = Intent(this.activity, DetalleTareaActivity::class.java)
-        intent.putExtra("tarea",bundle)
+        intent.putExtras(bundle)
         this.activity?.startActivity(intent)
         this.activity?.overridePendingTransition(
             R.anim.left_in, R.anim.left_out)
@@ -130,7 +155,7 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         mAlertDialog.setCanceledOnTouchOutside(false)
         mAlertDialog.window?.setBackgroundDrawable(null)
         textFinaliza.setOnClickListener {
-            UtilHome.hideSoftKeyBoard(this.activity!!, textFinaliza)
+            hideSoftKeyBoard(this.activity!!, textFinaliza)
             val c = Calendar.getInstance()
             val day = c.get(Calendar.DAY_OF_MONTH)
             val month = c.get(Calendar.MONTH)
@@ -149,8 +174,34 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
             dpd.show()
         }
         aceptar.setOnClickListener {
-           presenter.validacion(textTitulo,textContenido,textFinaliza,estadoOjo)
-            mAlertDialog.dismiss()
+            val titulo= textTitulo.text.toString()
+            val contenido = textContenido.text.toString()
+            val finalizacion = textFinaliza.text.toString()
+           val respuesta = presenter.validacion(titulo,contenido,finalizacion)
+            when(respuesta){
+                "Ingrese el titulo de la tarea"->{
+                    toastMessage(respuesta)
+                    textTitulo.text.clear()
+
+                }
+                "Ingrese el contenido de la tarea"->{
+                    toastMessage(respuesta)
+                    textContenido.text.clear()
+                }
+                "Ingrese la fecha de la tarea"->{
+                    toastMessage(respuesta)
+                    textFinaliza.text.clear()
+                }
+                "El dia elegido no es valido"->{
+                    toastMessage(respuesta)
+                }
+                "El mes elegido no es valido"->{
+                    toastMessage(respuesta)
+                }
+                else ->{
+                    mAlertDialog.dismiss()
+                }
+            }
         }
         cancelar.setOnClickListener { mAlertDialog.dismiss() }
     }

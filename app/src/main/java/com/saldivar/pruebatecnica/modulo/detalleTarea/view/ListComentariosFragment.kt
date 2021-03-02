@@ -11,15 +11,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
 import com.saldivar.pruebatecnica.helper.MyAplicationClass
 import com.saldivar.pruebatecnica.R
+import com.saldivar.pruebatecnica.db.Comentarios
+import com.saldivar.pruebatecnica.db.Tareas
 import com.saldivar.pruebatecnica.helper.*
 import com.saldivar.pruebatecnica.modulo.HomeActivity.View.HomeActivity
-import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.detalleTarea.mvp.DetalleTareaMVP
 import com.saldivar.pruebatecnica.modulo.detalleTarea.presenter.PresenterDetalleTarea
+import com.saldivar.pruebatecnica.modulo.detalleTarea.util.ComentariosAdapter
 import kotlinx.android.synthetic.main.activity_detalle_tarea.*
 import java.util.*
 
@@ -33,6 +37,10 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
     private lateinit var textDescripcionDetalle :TextView
     private lateinit var etNewComentario :EditText
     private lateinit var textNumeroComentarios:TextView
+    private  var textoCreacion =""
+    private  var textoFinalizacion =""
+    private  var idTarea:Int =0
+    private  var positionTarea:Int =0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,64 +55,73 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
         textNumeroComentarios = activity!!.findViewById(R.id.numeroComentarios)
         presenter = PresenterDetalleTarea(this)
         recycler = rootview.findViewById(R.id.recycler_comentarios)
-        presenter.getAllComentarios(recycler)
         iu()
+        val bundle = activity!!.intent.extras
+        mostrarDatos(bundle)
+        presenter.getAllComentarios(idTarea)
         return rootview
     }
 
+    private fun mostrarDatos(bundle: Bundle?) {
+        idTarea = bundle!!.getInt("tareaID",0)
+        textToolbar.text = bundle.getString("tareaTitulo")
+        textoCreacion = bundle.getString("tareaCreacion","")
+        textoFinalizacion = bundle.getString("tareaFinalizacion","")
+        textCreacionDetalle.text= "Creada: $textoCreacion"
+        textFinalizacionDetalle.text = "Finaliza: $textoFinalizacion"
+        textDescripcionDetalle.text= bundle.getString("tareaDetalle")
+        positionTarea = bundle.getInt("position")
+    }
+
     private fun iu() {
-        setearDatos()
         activity!!.delete.setOnClickListener(this)
         activity!!.check.setOnClickListener(this)
         activity!!.edit.setOnClickListener(this)
 
     }
 
-    private fun setearDatos() {
-
-        textToolbar.text = UtilHome.titulo
-        textCreacionDetalle.text = "Creada: ${UtilHome.creacion}"
-        textFinalizacionDetalle.text = "Finaliza: ${UtilHome.finalizacion}"
-        textDescripcionDetalle.text = UtilHome.detalle
-    }
-
     companion object {
         fun newInstance(): ListComentariosFragment = ListComentariosFragment()
     }
 
-    override fun cantidadComentarios(cantidadComentarios: String) {
-        textNumeroComentarios.text= cantidadComentarios
-    }
-
-    override fun setearDatosVista() {
-        setearDatos()
+    override fun setearDatosVista(tareaActualizada: Tareas) {
+        idTarea                      = tareaActualizada.id
+        textToolbar.text             = tareaActualizada.titulo
+        textCreacionDetalle.text     =  "Creada: ${tareaActualizada.creacion}"
+        textFinalizacionDetalle.text = "Finaliza: ${tareaActualizada.finalizacion}"
+        textDescripcionDetalle.text  = tareaActualizada.descripcion
     }
 
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.check->{
                 val dato = etNewComentario.text.toString()
-                presenter.enviarNuevoComentario(dato,recycler)
+                presenter.enviarNuevoComentario(dato,idTarea)
                 etNewComentario.setText("")
                 etNewComentario.clearFocus()
-                UtilHome.hideSoftKeyBoard(MyAplicationClass.ctx!!, etNewComentario)
+                hideSoftKeyBoard(MyAplicationClass.ctx!!, etNewComentario)
             }
             R.id.edit->{
-                showDialog(dialog(),recycler)
+                showDialog()
             }
             R.id.delete->{
-                showDialogDelete(dialogDelete())
+                showDialogDelete()
             }
         }
     }
 
-    private fun dialog() = LayoutInflater.from(this.activity!!).
-    inflate(R.layout.alert_dialog_nueva_tarea,this.activity!!.findViewById(R.id.alertNuevaTarea))
+    override fun setRecyclerView(datosComentario: MutableList<Comentarios>) {
+        textNumeroComentarios.text=("Comentarios (${datosComentario.size})")
+        recycler.setHasFixedSize(true)
+        recycler.itemAnimator = DefaultItemAnimator()
+        recycler.layoutManager = LinearLayoutManager(MyAplicationClass.ctx)
+        recycler.adapter =(ComentariosAdapter(datosComentario))
+    }
 
-    private fun dialogDelete() = LayoutInflater.from(this.activity!!).
-    inflate(R.layout.alert_dialog_delete, this.activity!!.findViewById(R.id.alertDeleteTarea))
 
-    private fun showDialog( mDialogView: View,recyclerView:RecyclerView){
+    private fun showDialog(){
+        val mDialogView =LayoutInflater.from(this.activity!!).
+        inflate(R.layout.alert_dialog_nueva_tarea,this.activity!!.findViewById(R.id.alertNuevaTarea))
         val mBuilder = AlertDialog.Builder(this.activity!!).setView(mDialogView)
         val tituloAlert = mDialogView.findViewById(R.id.TituloDialog) as TextView
         val containerTituloAlert = mDialogView.findViewById(R.id.containerTituloAlert) as TextInputLayout
@@ -117,16 +134,16 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
         val cancelar = mDialogView.findViewById(R.id.butonCancelar) as Button
             tituloAlert.text = "Editar Actividad"
             containerTituloAlert.hint = "Titulo"
-            textTitulo.setText(UtilHome.titulo)
+            textTitulo.setText(textToolbar.text.toString())
             containerContenidoAlert.hint = "Contenido"
-            textContenido.setText(UtilHome.detalle)
+            textContenido.setText(textDescripcionDetalle.text.toString())
             containerFinalizaAlert.hint = "Finaliza"
-            textFinaliza.setText("${UtilHome.finalizacion}/2021")
+            textFinaliza.setText("$textoFinalizacion/2021")
         val  mAlertDialog = mBuilder.show()
         mAlertDialog.setCanceledOnTouchOutside(false)
         mAlertDialog.window?.setBackgroundDrawable(null)
         textFinaliza.setOnClickListener {
-            UtilHome.hideSoftKeyBoard(this.activity!!, textFinaliza)
+            hideSoftKeyBoard(this.activity!!, textFinaliza)
             val c = Calendar.getInstance()
             val day = c.get(Calendar.DAY_OF_MONTH)
             val month = c.get(Calendar.MONTH)
@@ -145,12 +162,42 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
             dpd.show()
         }
         aceptar.setOnClickListener {
-            presenter.validacion(textTitulo,textContenido,textFinaliza,mAlertDialog,recyclerView)
+            val titulo = textTitulo.text.toString()
+            val contenido = textContenido.text.toString()
+            val finaliza = textFinaliza.text.toString()
+            val respuesta =presenter.validacion(titulo,contenido,finaliza,idTarea)
+            when(respuesta){
+                "Ingrese el titulo de la tarea"->{
+                    toastMessage(respuesta)
+                    textTitulo.text.clear()
+
+                }
+                "Ingrese el contenido de la tarea"->{
+                    toastMessage(respuesta)
+                    textContenido.text.clear()
+                }
+                "Ingrese la fecha de la tarea"->{
+                    toastMessage(respuesta)
+                    textFinaliza.text.clear()
+                }
+                "El dia elegido no es valido"->{
+                    toastMessage(respuesta)
+                }
+                "El mes elegido no es valido"->{
+                    toastMessage(respuesta)
+                }
+                else ->{
+                    mAlertDialog.dismiss()
+                }
+            }
+            mAlertDialog.dismiss()
         }
         cancelar.setOnClickListener { mAlertDialog.dismiss() }
     }
 
-    private fun showDialogDelete( mDialogView: View){
+    private fun showDialogDelete(){
+        val mDialogView =LayoutInflater.from(this.activity!!).
+        inflate(R.layout.alert_dialog_delete, this.activity!!.findViewById(R.id.alertDeleteTarea))
         val mBuilder = AlertDialog.Builder(this.activity!!).setView(mDialogView)
         val titulo = mDialogView.findViewById(R.id.TituloDialogDelete) as TextView
         val recordatorio = mDialogView.findViewById(R.id.recordatorioDialogDelete) as TextView
@@ -158,11 +205,10 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
         val cancelar = mDialogView.findViewById(R.id.butonCancelar) as Button
         val  mAlertDialog = mBuilder.show()
         mAlertDialog.window?.setBackgroundDrawable(null)
-        titulo.text = "¿Seguro que quieres eliminar ${UtilHome.titulo}?"
+        titulo.text = "¿Seguro que quieres eliminar ${textToolbar.text}?"
         recordatorio.text = "Recuerda: Se van a borrar todos los comentarios"
         aceptar.setOnClickListener {
-            presenter.eliminarComentarios()
-            presenter.eliminarTarea()
+            presenter.eliminarComentarios(idTarea)
             backActivity()
             mAlertDialog.dismiss()
         }
@@ -172,7 +218,12 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
     }
 
     private fun backActivity() {
+        val bundle = Bundle()
+        bundle.putString("eliminar","SI")
+        bundle.putInt("position",positionTarea)
+        bundle.putInt("idTarea",idTarea)
         val intent = Intent(activity, HomeActivity::class.java)
+        intent.putExtras(bundle)
         startActivity(intent)
         activity!!.overridePendingTransition(
                 R.anim.right_in, R.anim.right_out

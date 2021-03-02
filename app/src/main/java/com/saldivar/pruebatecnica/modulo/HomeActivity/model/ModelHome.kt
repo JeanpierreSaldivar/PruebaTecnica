@@ -2,7 +2,6 @@ package com.saldivar.pruebatecnica.modulo.HomeActivity.model
 
 import com.saldivar.pruebatecnica.db.InstanciaBD
 import com.saldivar.pruebatecnica.db.Tareas
-import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.HomeActivity.mvp.HomeMVP
 import com.saldivar.pruebatecnica.modulo.HomeActivity.presenter.PresenterHome
 
@@ -31,6 +30,10 @@ class ModelHome(private val presenter: PresenterHome): HomeMVP.Model{
 
     override fun consultarUltimaTareaInsertada(): Tareas {
         return InstanciaBD.dbRoom.consultarUltimaTarea()
+    }
+
+    override fun eliminarTarea(idTarea: Int) {
+        InstanciaBD.dbRoom.deleteTarea(idTarea)
     }
 
 

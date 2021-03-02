@@ -3,7 +3,6 @@ package com.saldivar.pruebatecnica.modulo.HomeActivity.util
 import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.saldivar.pruebatecnica.R
 import com.saldivar.pruebatecnica.db.Tareas
@@ -17,9 +16,13 @@ class TareasAdapter(private val listener: RecyclerTareasListener)
     fun setDataList(data: MutableList<Tareas>){
          flight = data
     }
-    fun addItem(position: Int,tarea: Tareas) {
-        flight.add(position,tarea)
+    fun addItem(position: Int, tarea: Tareas) {
+        flight.add(position, tarea)
         notifyItemInserted(position)
+    }
+    fun removeItem(position: Int) {
+        flight.removeAt(position)
+        notifyItemRemoved(position)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)=(MainViewHolder(
         parent.inflate(
