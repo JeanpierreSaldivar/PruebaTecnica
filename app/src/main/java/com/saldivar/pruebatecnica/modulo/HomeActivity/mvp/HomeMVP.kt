@@ -13,20 +13,21 @@ import java.util.zip.Inflater
 interface HomeMVP {
     interface Model{
         fun insertarListaTareasDefectoBD(mutableList:MutableList<Tareas>)
-        fun consultarListaTareas():MutableList<Tareas>
-        fun consultarEstadoTarea(idTarea:Int):List<Tareas>
+        fun consultarListaTareas(estadoOjo:Boolean):MutableList<Tareas>
+        fun consultarEstadoTarea(idTarea:Int):Tareas
         fun updateEstado(tarea:Tareas, valorActulizar:Boolean)
         fun  insertarNuevaTarea(nuevaTarea:Tareas)
-        fun consultarUltimaTareaInsertada():List<Tareas>
+        fun consultarUltimaTareaInsertada():Tareas
     }
     interface Presenter{
-        fun cambiarEstadoOjo():Drawable
-        fun consultarListTareas(recyclerView: RecyclerView)
+        fun consultarListTareas(estadoOjo:Boolean)
         fun insertarNuevaTarea(nuevaTarea:Tareas)
-        fun validacion(titulo:EditText,contenido:EditText,fecha:EditText,mAlerDialog:androidx.appcompat.app.AlertDialog,recyclerView: RecyclerView)
+        fun validacion(titulo:EditText,contenido:EditText,fecha:EditText,estadoOjo: Boolean)
+        fun consultaEstadoTarea(tareaID:Int)
     }
     interface View{
-        fun nextActivity()
+        fun mostrarEnRecycler(list:MutableList<Tareas>)
+        fun mostrarEnRecyclerAdd(ultimaTarea:Tareas)
     }
 
 

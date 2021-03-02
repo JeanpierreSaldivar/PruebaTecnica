@@ -5,8 +5,8 @@ import androidx.room.*
 @Dao
 interface RoomDao {
     //Tareas
-    @Query ("SELECT * FROM tareas WHERE ID = (SELECT MAX(ID) FROM tareas) ")
-    fun consultarUltimaTarea():List<Tareas>
+    @Query ("SELECT * FROM tareas WHERE id = (SELECT MAX(ID) FROM tareas) limit 1")
+    fun consultarUltimaTarea():Tareas
 
     @Insert
     fun insertTarea(tarea: Tareas)
@@ -14,14 +14,14 @@ interface RoomDao {
     @Query("Delete from tareas where id =:idTarea")
     fun deleteTarea(idTarea:Int)
 
-    @Query("SELECT * FROM tareas where estado=:estadoBuscar")
+    @Query("SELECT * FROM tareas where estado=:estadoBuscar ")
     fun getAllTareas(estadoBuscar:Boolean):MutableList<Tareas>
 
-    @Query("UPDATE tareas set estado = :boolean  where id=:idEntrega")
+    @Query("UPDATE tareas set estado = :boolean  where id=:idEntrega ")
     fun updateEstado(boolean: Boolean,idEntrega:Int)
 
-    @Query("select * from tareas where id=:idEntrega")
-    fun consultarTarea(idEntrega:Int):List<Tareas>
+    @Query("select * from tareas where id=:idEntrega limit 1")
+    fun consultarTarea(idEntrega:Int):Tareas
 
     @Query("UPDATE tareas set titulo=:tituloEnviado, descripcion=:descripcionEnviado,finalizacion=:finalizacionEnviado where id =:idEnviado")
     fun actualizarTarea(tituloEnviado:String,descripcionEnviado:String,finalizacionEnviado:String,idEnviado:Int)

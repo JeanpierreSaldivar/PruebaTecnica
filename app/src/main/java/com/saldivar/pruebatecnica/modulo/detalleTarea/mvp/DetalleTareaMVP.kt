@@ -22,7 +22,7 @@ interface DetalleTareaMVP {
         fun insertarDatosDefecto(listObject: MutableList<Comentarios>)
         fun insertarComentarioBD(comentarioNuevo:Comentarios)
         fun updateTarea(titulo: String, descripcion: String, finalizacion: String, id: Int)
-        fun consultarDatosNuevosTarea( id: Int):List<Tareas>
+        fun consultarDatosNuevosTarea(id:Int):Tareas
         fun eliminarComentarios(id:Int)
         fun eliminarTarea(id:Int)
     }

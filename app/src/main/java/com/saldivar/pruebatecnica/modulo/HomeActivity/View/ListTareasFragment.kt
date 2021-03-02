@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.saldivar.pruebatecnica.helper.MyAplicationClass
@@ -18,10 +20,13 @@ import com.saldivar.pruebatecnica.db.Tareas
 import com.saldivar.pruebatecnica.helper.*
 import com.saldivar.pruebatecnica.modulo.HomeActivity.mvp.HomeMVP
 import com.saldivar.pruebatecnica.modulo.HomeActivity.presenter.PresenterHome
+import com.saldivar.pruebatecnica.modulo.HomeActivity.util.RecyclerTareasListener
+import com.saldivar.pruebatecnica.modulo.HomeActivity.util.TareasAdapter
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.detalleTarea.view.DetalleTareaActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list_tareas.view.*
+import kotlinx.android.synthetic.main.item_recyler_tareas.*
 import java.util.*
 
 
@@ -30,6 +35,8 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
     private lateinit var recycler: RecyclerView
     private lateinit var visualizadorOjo: ImageView
     private  lateinit var floatingBtn:FloatingActionButton
+    private lateinit var adapter:TareasAdapter
+    private var estadoOjo = false
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val rootview = inflater.inflate(R.layout.fragment_list_tareas, container, false)
@@ -39,7 +46,7 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         activity!!.visualizador.setOnClickListener(this)
         presenter = PresenterHome(this)
         recycler = rootview.findViewById(R.id.recycler_tareas)
-        consultar()
+        consultar(estadoOjo)
         return rootview
     }
     companion object {
@@ -49,40 +56,76 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.visualizador->{
-                visualizadorOjo.background = presenter.cambiarEstadoOjo()
-                consultar()
+                if (estadoOjo){
+                    estadoOjo= false
+                    visualizadorOjo.background = resources.getDrawable(R.drawable.ic_baseline_remove_red_eye_24)
+                } else{
+                    estadoOjo= true
+                    visualizadorOjo.background = resources.getDrawable(R.drawable.ic_baseline_visibility_off_24)
+                }
+                consultar(estadoOjo)
             }
             R.id.flotanButton -> {
-                showDialogFragment(dialog(),recycler)
+                showDialogFragment(estadoOjo)
             }
         }
     }
 
-    private fun consultar() {
-        presenter.consultarListTareas(recycler)
+    private fun consultar(estadoOjo:Boolean) {
+        presenter.consultarListTareas(estadoOjo)
     }
 
-    private fun dialog() = LayoutInflater.from(this.activity!!).
-    inflate(R.layout.alert_dialog_nueva_tarea,this.activity!!.findViewById(R.id.alertNuevaTarea))
+    override fun mostrarEnRecycler(list: MutableList<Tareas>) {
+        recycler.setHasFixedSize(true)
+        recycler.itemAnimator = DefaultItemAnimator()
+        recycler.layoutManager = LinearLayoutManager(MyAplicationClass.ctx)
+        adapter =TareasAdapter(object:
+            RecyclerTareasListener{
+            override fun onClick(tarea: Tareas, position: Int) {
+                nextActivity(tarea)
+            }
 
-    override fun nextActivity() {
+            override fun change(tarea: Tareas, position: Int) {
+                presenter.consultaEstadoTarea(tarea.id)
+            }
+        })
+        recycler.adapter = adapter
+        adapter.setDataList(list)
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun mostrarEnRecyclerAdd(ultimaTarea: Tareas) {
+        recycler.setHasFixedSize(true)
+        recycler.itemAnimator = DefaultItemAnimator()
+        recycler.layoutManager = LinearLayoutManager(MyAplicationClass.ctx)
+        adapter.addItem(0,ultimaTarea)
+    }
+
+    fun nextActivity(tarea:Tareas) {
+        val bundle = Bundle()
+        bundle.putString("tareaID",tarea.id.toString())
+        bundle.putString("tareaTitulo",tarea.titulo)
+        bundle.putString("tareaDetalle",tarea.descripcion)
+        bundle.putString("tareaCreacion",tarea.creacion)
+        bundle.putString("tareaFinalizacion",tarea.finalizacion)
         val intent = Intent(this.activity, DetalleTareaActivity::class.java)
-        this.activity!!.startActivity(intent)
-        this.activity!!.overridePendingTransition(
+        intent.putExtra("tarea",bundle)
+        this.activity?.startActivity(intent)
+        this.activity?.overridePendingTransition(
             R.anim.left_in, R.anim.left_out)
-        this.activity!!.finish()
+        this.activity?.finish()
     }
 
 
-
-
-    fun showDialogFragment( mDialogView: View,recyclerView: RecyclerView){
-        val mBuilder = AlertDialog.Builder(this.activity!!).setView(mDialogView)
-        val textTitulo = mDialogView.findViewById(R.id.tituloAlert) as EditText
-        val textContenido= mDialogView.findViewById(R.id.contenidoAlert) as EditText
-        val textFinaliza = mDialogView.findViewById(R.id.finalizaAlert) as EditText
-        val aceptar = mDialogView.findViewById(R.id.botonAceptar) as Button
-        val cancelar = mDialogView.findViewById(R.id.butonCancelar) as Button
+    private fun showDialogFragment(estadoOjo: Boolean){
+        val dialog =LayoutInflater.from(this.activity!!).
+        inflate(R.layout.alert_dialog_nueva_tarea,this.activity!!.findViewById(R.id.alertNuevaTarea))
+        val mBuilder = AlertDialog.Builder(this.activity!!).setView(dialog)
+        val textTitulo = dialog.findViewById(R.id.tituloAlert) as EditText
+        val textContenido= dialog.findViewById(R.id.contenidoAlert) as EditText
+        val textFinaliza = dialog.findViewById(R.id.finalizaAlert) as EditText
+        val aceptar = dialog.findViewById(R.id.botonAceptar) as Button
+        val cancelar = dialog.findViewById(R.id.butonCancelar) as Button
         val  mAlertDialog = mBuilder.show()
         mAlertDialog.setCanceledOnTouchOutside(false)
         mAlertDialog.window?.setBackgroundDrawable(null)
@@ -106,8 +149,8 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
             dpd.show()
         }
         aceptar.setOnClickListener {
-           presenter.validacion(textTitulo,textContenido,textFinaliza,mAlertDialog,recyclerView)
-
+           presenter.validacion(textTitulo,textContenido,textFinaliza,estadoOjo)
+            mAlertDialog.dismiss()
         }
         cancelar.setOnClickListener { mAlertDialog.dismiss() }
     }

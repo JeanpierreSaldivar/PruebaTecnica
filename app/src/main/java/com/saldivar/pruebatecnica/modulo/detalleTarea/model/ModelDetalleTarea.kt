@@ -27,7 +27,7 @@ class ModelDetalleTarea(private val presenter: PresenterDetalleTarea):DetalleTar
         InstanciaBD.dbRoom.actualizarTarea(titulo,descripcion,finalizacion,id)
     }
 
-    override fun consultarDatosNuevosTarea(id: Int):List<Tareas> {
+    override fun consultarDatosNuevosTarea(id: Int):Tareas {
         return InstanciaBD.dbRoom.consultarTarea(id)
     }
 

@@ -61,6 +61,7 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
     }
 
     private fun setearDatos() {
+
         textToolbar.text = UtilHome.titulo
         textCreacionDetalle.text = "Creada: ${UtilHome.creacion}"
         textFinalizacionDetalle.text = "Finaliza: ${UtilHome.finalizacion}"

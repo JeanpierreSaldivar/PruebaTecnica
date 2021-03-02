@@ -14,7 +14,6 @@ import com.saldivar.pruebatecnica.helper.toastMessage
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.detalleTarea.model.ModelDetalleTarea
 import com.saldivar.pruebatecnica.modulo.detalleTarea.mvp.DetalleTareaMVP
-import com.saldivar.pruebatecnica.modulo.detalleTarea.util.MapperOrdenarComentarios
 
 class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTareaMVP.Presenter{
     private val model = ModelDetalleTarea(this)
@@ -22,10 +21,6 @@ class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTare
         val listaComentarios = model.getAllComentarios()
         if(listaComentarios.isNotEmpty()){
             ordenarMostrarComentarios(listaComentarios,recyclerView)
-        }
-        else{
-            insertDatosDefecto()
-            consultar(recyclerView)
         }
     }
 
@@ -86,17 +81,17 @@ class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTare
         model.eliminarTarea(UtilHome.id)
     }
 
-    private fun setearDatosVista(tareaActualizada: List<Tareas>) {
+    private fun setearDatosVista(tareaActualizada: Tareas) {
         setearDatosObject(tareaActualizada)
         view.setearDatosVista()
     }
 
-    private fun setearDatosObject(tareaActualizada: List<Tareas>) {
-        UtilHome.id = tareaActualizada[0].id
-        UtilHome.titulo =tareaActualizada[0].titulo
-        UtilHome.creacion = tareaActualizada[0].creacion
-        UtilHome.detalle = tareaActualizada[0].descripcion
-        UtilHome.finalizacion = tareaActualizada[0].finalizacion
+    private fun setearDatosObject(tareaActualizada: Tareas) {
+        UtilHome.id = tareaActualizada.id
+        UtilHome.titulo =tareaActualizada.titulo
+        UtilHome.creacion = tareaActualizada.creacion
+        UtilHome.detalle = tareaActualizada.descripcion
+        UtilHome.finalizacion = tareaActualizada.finalizacion
     }
 
     private fun consultar(recyclerView:RecyclerView) {
@@ -105,7 +100,7 @@ class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTare
     }
 
     private fun ordenarMostrarComentarios(listaObtenida: List<Comentarios>, recyclerView: RecyclerView) {
-        val listaOrdenada =MapperOrdenarComentarios().ordenarComentariosDeMayorMenor(listaObtenida)
+        val listaOrdenada =listaObtenida.sortedByDescending { it.idComentario }
         setRecyclerView(listaOrdenada,recyclerView)
     }
     private fun setRecyclerView(datosComentario: List<Comentarios>, recycler: RecyclerView) {
@@ -114,21 +109,5 @@ class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTare
         recycler.itemAnimator = DefaultItemAnimator()
         recycler.layoutManager = LinearLayoutManager(MyAplicationClass.ctx)
         recycler.adapter =(ComentariosAdapter(datosComentario))
-    }
-
-    private fun insertDatosDefecto() {
-        val listObject = mutableListOf<Comentarios>()
-        val objectVal0 = Comentarios(0, UtilHome.id,"anonimus",
-                "Otra vez soy yo")
-        listObject.add(0,objectVal0)
-        val objectVal1 = Comentarios(0, UtilHome.id,"anonimus",
-                "Necesito saber más sobre la tarea. La verdad  no entiendo mucho lo que dice." +
-                        "Podría actualizar su contenido por favor. Sería de gran utilidad")
-        listObject.add(1,objectVal1)
-        insertarBD(listObject)
-    }
-
-    private fun insertarBD(listObject: MutableList<Comentarios>) {
-        model.insertarDatosDefecto(listObject)
     }
 }

@@ -40,9 +40,3 @@ fun searchAutomaticSaldivar(repetitiveTask:()->Unit,successTask:()->Unit) {
     }
 }
 
-fun Context.preferences()= preferencesS(this,0,getString(R.string.nombre_preferences))
-
-fun preferencesS(context: Context, privateMode:Int, namePreference:String): SharedPreferences {
-    return context.getSharedPreferences(namePreference,privateMode)
-}
-

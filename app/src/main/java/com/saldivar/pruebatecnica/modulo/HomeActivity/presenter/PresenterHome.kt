@@ -14,55 +14,37 @@ import com.saldivar.pruebatecnica.modulo.HomeActivity.util.TareasAdapter
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.UtilHome
 import com.saldivar.pruebatecnica.modulo.HomeActivity.model.ModelHome
 import com.saldivar.pruebatecnica.modulo.HomeActivity.mvp.HomeMVP
-import com.saldivar.pruebatecnica.modulo.HomeActivity.util.MapperListaTareas
 
 class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
     private val model = ModelHome(this)
 
-    override fun cambiarEstadoOjo(): Drawable {
-        UtilHome.ojo = !UtilHome.ojo
-        return if (UtilHome.ojo){
-           MyAplicationClass.ctx!!.resources.getDrawable(R.drawable.ic_baseline_visibility_off_24)
-        } else{
-            MyAplicationClass.ctx!!.resources.getDrawable(R.drawable.ic_baseline_remove_red_eye_24)
+    override fun consultarListTareas(estadoOjo:Boolean) {
+        val listaObtenida = model.consultarListaTareas(estadoOjo)
+        if (listaObtenida.isEmpty()){
+            toastMessage("No hay tareas disponibles")
+            view.mostrarEnRecycler(listaObtenida)
+
+        }
+        else{
+            ordenarMostrarTareas(listaObtenida)
         }
     }
 
-    override fun consultarListTareas(recyclerView: RecyclerView) {
-        val pref = MyAplicationClass.ctx!!.preferences()
-        val listaObtenida = model.consultarListaTareas()
-        when{
-            listaObtenida.isEmpty() && !pref.getBoolean("inicio",false) ->{
-                val mutableList = insertDatosDefecto()
-                model.insertarListaTareasDefectoBD(mutableList)
-                val listaTareas=model.consultarListaTareas()
-                ordenarMostrarTareas(listaTareas,recyclerView)
-                val edit = pref.edit()
-                edit.putBoolean("inicio",true)
-                edit.apply()
-            }
-            listaObtenida.isEmpty() && pref.getBoolean("inicio",false)->{
-                toastMessage("No hay tareas disponibles")
-                ordenarMostrarTareas(listaObtenida,recyclerView)
-            }
-            else->{
-                ordenarMostrarTareas(listaObtenida,recyclerView)
-            }
+    private fun ordenarMostrarTareas(listaObtenida: MutableList<Tareas>) {
+        val lista = mutableListOf<Tareas>()
+        val listaOrdenada =listaObtenida.sortedByDescending{ it.id }
+        for (i in listaOrdenada){
+            lista.add(i)
         }
+        view.mostrarEnRecycler(lista)
 
-    }
-
-    private fun ordenarMostrarTareas(listaObtenida: MutableList<Tareas>, recyclerView: RecyclerView) {
-        val listaOrdenada =MapperListaTareas().ordenarTareasDeMayorMenor(listaObtenida)
-        setRecyclerView(listaOrdenada,recyclerView)
     }
 
     override fun insertarNuevaTarea(nuevaTarea: Tareas) {
         model.insertarNuevaTarea(nuevaTarea)
     }
 
-    override fun validacion(titulo:EditText,contenido:EditText,fecha:EditText,mAlertDialog:androidx.appcompat.app.AlertDialog,
-    recyclerView: RecyclerView) {
+    override fun validacion(titulo:EditText,contenido:EditText,fecha:EditText,estadoOjo: Boolean) {
         if(titulo.text.toString().isEmpty() || titulo.text.toString().isBlank()){
             toastMessage("Ingrese el titulo de la tarea")
             titulo.text.clear()
@@ -88,10 +70,10 @@ class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
                     if (mesActual.toInt()<=mesElegido.toInt()){
                         when{
                             mesActual.toInt() == mesElegido.toInt() && diaElegido.toInt()>=diaActual.toInt()->{
-                                insertar(titulo.text.toString(),contenido.text.toString(),fechaCreacion,textFinalizaSinYear,recyclerView,mAlertDialog)
+                                insertar(titulo.text.toString(),contenido.text.toString(),fechaCreacion,textFinalizaSinYear,estadoOjo)
                             }
                             mesActual.toInt() < mesElegido.toInt()->{
-                                insertar(titulo.text.toString(),contenido.text.toString(),fechaCreacion,textFinalizaSinYear,recyclerView,mAlertDialog)
+                                insertar(titulo.text.toString(),contenido.text.toString(),fechaCreacion,textFinalizaSinYear,estadoOjo)
                             }
                             else->{
                                 toastMessage("El dia elegido no es valido")
@@ -105,69 +87,23 @@ class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
         }
     }
 
-    private  fun insertar(titulo:String,contenido:String,fechaCreacion:String,textFinalizaSinYear:String,recyclerView:RecyclerView,mAlertDialog:androidx.appcompat.app.AlertDialog){
+    override fun consultaEstadoTarea(tareaID: Int) {
+        val tarea = model.consultarEstadoTarea(tareaID)
+        updateEstadoTarea(tarea)
+    }
+
+    private  fun insertar(titulo:String,contenido:String,fechaCreacion:String,textFinalizaSinYear:String,estadoOjo: Boolean){
         val objectVal0 = Tareas(
                 0, titulo, contenido,fechaCreacion,
                 textFinalizaSinYear,false)
         model.insertarNuevaTarea(objectVal0)
-        val listaTareas = model.consultarListaTareas()
-        /*val listaTareas = model.consultarListaTareas()
-        model.insertarNuevaTarea(objectVal0)
         val ultimaTarea =model.consultarUltimaTareaInsertada()
-        listaTareas.add(ultimaTarea[0])
-        val listaOrdenada =MapperListaTareas().ordenarTareasDeMayorMenor(listaTareas)
-        recyclerView.adapter.setList
-        recyclerView.adapter!!.notifyItemInserted(0)*/
-        ordenarMostrarTareas(listaTareas,recyclerView)
-        mAlertDialog.dismiss()
+        view.mostrarEnRecyclerAdd(ultimaTarea)
     }
 
-    private fun insertDatosDefecto():MutableList<Tareas> {
-        val listObject = mutableListOf<Tareas>()
-        val objectVal0 = Tareas(1, "Ejercicio para casa", "Resolver problemas diversos sobre algebra",
-            "17/02", "22/02", false)
-        listObject.add(0, objectVal0)
-        val objectVal1 = Tareas(2, "Tarea de Química", "Resolver problemas sobre teoremas sobre la" +
-                "tabla periodica", "17/02", "22/02", false)
-        listObject.add(1, objectVal1)
-        val objectVal2 = Tareas(3, "Tarea de Matemáticas", "Resolver problemas sobre teoremas de" +
-                "pitagoras", "17/02", "22/02", false)
-        listObject.add(2, objectVal2)
-        val objectVal3 = Tareas(4, "Tarea de Biologia", "Resolver problemas sobre Biologia", "17/02", "22/02", true)
-        listObject.add(3, objectVal3)
-         return listObject
-    }
-
-    private fun setRecyclerView(datosTarea: List<Tareas>,recycler: RecyclerView) {
-        recycler.setHasFixedSize(true)
-        recycler.itemAnimator = DefaultItemAnimator()
-        recycler.layoutManager = LinearLayoutManager(MyAplicationClass.ctx)
-        recycler.adapter = (TareasAdapter(
-            datosTarea,
-            object :
-                RecyclerTareasListener {
-                override fun onClick(tarea: Tareas, position: Int) {
-                    setearValores(tarea)
-                    view.nextActivity()
-                }
-                override fun change(tarea: Tareas, position: Int) {
-                    val tarea=model.consultarEstadoTarea(tarea.id)
-                    updateEstadoTarea(tarea)
-                }
-            }))
-    }
-
-    private fun setearValores(tarea: Tareas) {
-        UtilHome.id = tarea.id
-        UtilHome.titulo = tarea.titulo
-        UtilHome.creacion = tarea.creacion
-        UtilHome.detalle = tarea.descripcion
-        UtilHome.finalizacion = tarea.finalizacion
-    }
-
-    private fun updateEstadoTarea(tarea: List<Tareas>) {
-        val valorActulizar= !tarea[0].estado
-        model.updateEstado(tarea[0], valorActulizar)
+    private fun updateEstadoTarea(tarea: Tareas) {
+        val valorActulizar= !tarea.estado
+        model.updateEstado(tarea, valorActulizar)
     }
 
 

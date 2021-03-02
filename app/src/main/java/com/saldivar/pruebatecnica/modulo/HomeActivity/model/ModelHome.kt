@@ -13,11 +13,11 @@ class ModelHome(private val presenter: PresenterHome): HomeMVP.Model{
         }
     }
 
-    override fun consultarListaTareas():MutableList<Tareas> {
-        return InstanciaBD.dbRoom.getAllTareas(UtilHome.ojo)
+    override fun consultarListaTareas(estadoOjo:Boolean):MutableList<Tareas> {
+        return InstanciaBD.dbRoom.getAllTareas(estadoOjo)
     }
 
-    override fun consultarEstadoTarea(idTarea: Int): List<Tareas> {
+    override fun consultarEstadoTarea(idTarea: Int): Tareas {
         return InstanciaBD.dbRoom.consultarTarea(idTarea)
     }
 
@@ -29,7 +29,7 @@ class ModelHome(private val presenter: PresenterHome): HomeMVP.Model{
         InstanciaBD.dbRoom.insertTarea(nuevaTarea)
     }
 
-    override fun consultarUltimaTareaInsertada(): List<Tareas> {
+    override fun consultarUltimaTareaInsertada(): Tareas {
         return InstanciaBD.dbRoom.consultarUltimaTarea()
     }
 
