@@ -76,9 +76,14 @@ class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
         return  retornar
     }
 
-    override fun consultaEstadoTarea(tareaID: Int) {
+    override fun consultaEstadoTarea(tareaID: Int):Boolean {
         val tarea = model.consultarEstadoTarea(tareaID)
-        updateEstadoTarea(tarea)
+        return tarea.estado
+
+    }
+
+    override fun updateEstadoTarea(tarea: Tareas, valorActulizar: Boolean) {
+        model.updateEstado(tarea, valorActulizar)
     }
 
     override fun eliminarTarea(idTarea: Int) {
@@ -94,10 +99,7 @@ class PresenterHome(private val view: HomeMVP.View) : HomeMVP.Presenter {
         view.mostrarEnRecyclerAdd(ultimaTarea)
     }
 
-    private fun updateEstadoTarea(tarea: Tareas) {
-        val valorActulizar= !tarea.estado
-        model.updateEstado(tarea, valorActulizar)
-    }
+
 
 
 }

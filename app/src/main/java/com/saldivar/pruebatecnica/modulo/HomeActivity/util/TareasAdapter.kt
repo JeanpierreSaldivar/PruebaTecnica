@@ -24,6 +24,9 @@ class TareasAdapter(private val listener: RecyclerTareasListener)
         flight.removeAt(position)
         notifyItemRemoved(position)
     }
+    fun eliminarListaAnterior(){
+        flight.clear()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)=(MainViewHolder(
         parent.inflate(
             R.layout.item_recyler_tareas

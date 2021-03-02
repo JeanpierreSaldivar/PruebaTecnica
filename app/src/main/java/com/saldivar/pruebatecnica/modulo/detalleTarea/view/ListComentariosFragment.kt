@@ -1,8 +1,11 @@
 package com.saldivar.pruebatecnica.modulo.detalleTarea.view
 
+import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +27,7 @@ import com.saldivar.pruebatecnica.modulo.HomeActivity.View.HomeActivity
 import com.saldivar.pruebatecnica.modulo.detalleTarea.mvp.DetalleTareaMVP
 import com.saldivar.pruebatecnica.modulo.detalleTarea.presenter.PresenterDetalleTarea
 import com.saldivar.pruebatecnica.modulo.detalleTarea.util.ComentariosAdapter
+import com.saldivar.pruebatecnica.modulo.detalleTarea.util.datosDevueltos
 import kotlinx.android.synthetic.main.activity_detalle_tarea.*
 import java.util.*
 
@@ -39,8 +43,6 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
     private lateinit var textNumeroComentarios:TextView
     private  var textoCreacion =""
     private  var textoFinalizacion =""
-    private  var idTarea:Int =0
-    private  var positionTarea:Int =0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,19 +60,22 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
         iu()
         val bundle = activity!!.intent.extras
         mostrarDatos(bundle)
-        presenter.getAllComentarios(idTarea)
+        presenter.getAllComentarios(datosDevueltos.idTarea)
         return rootview
     }
 
+
+
     private fun mostrarDatos(bundle: Bundle?) {
-        idTarea = bundle!!.getInt("tareaID",0)
+        datosDevueltos.idTarea = bundle!!.getInt("tareaID",0)
         textToolbar.text = bundle.getString("tareaTitulo")
         textoCreacion = bundle.getString("tareaCreacion","")
         textoFinalizacion = bundle.getString("tareaFinalizacion","")
         textCreacionDetalle.text= "Creada: $textoCreacion"
         textFinalizacionDetalle.text = "Finaliza: $textoFinalizacion"
         textDescripcionDetalle.text= bundle.getString("tareaDetalle")
-        positionTarea = bundle.getInt("position")
+        datosDevueltos.positionTarea = bundle.getInt("position")
+        datosDevueltos.estadoOjo = bundle.getBoolean("estadoOjo")
     }
 
     private fun iu() {
@@ -85,7 +90,7 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
     }
 
     override fun setearDatosVista(tareaActualizada: Tareas) {
-        idTarea                      = tareaActualizada.id
+        datosDevueltos.idTarea                      = tareaActualizada.id
         textToolbar.text             = tareaActualizada.titulo
         textCreacionDetalle.text     =  "Creada: ${tareaActualizada.creacion}"
         textFinalizacionDetalle.text = "Finaliza: ${tareaActualizada.finalizacion}"
@@ -96,7 +101,7 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
         when(v?.id){
             R.id.check->{
                 val dato = etNewComentario.text.toString()
-                presenter.enviarNuevoComentario(dato,idTarea)
+                presenter.enviarNuevoComentario(dato,datosDevueltos.idTarea)
                 etNewComentario.setText("")
                 etNewComentario.clearFocus()
                 hideSoftKeyBoard(MyAplicationClass.ctx!!, etNewComentario)
@@ -165,7 +170,7 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
             val titulo = textTitulo.text.toString()
             val contenido = textContenido.text.toString()
             val finaliza = textFinaliza.text.toString()
-            val respuesta =presenter.validacion(titulo,contenido,finaliza,idTarea)
+            val respuesta =presenter.validacion(titulo,contenido,finaliza,datosDevueltos.idTarea)
             when(respuesta){
                 "Ingrese el titulo de la tarea"->{
                     toastMessage(respuesta)
@@ -208,8 +213,8 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
         titulo.text = "¿Seguro que quieres eliminar ${textToolbar.text}?"
         recordatorio.text = "Recuerda: Se van a borrar todos los comentarios"
         aceptar.setOnClickListener {
-            presenter.eliminarComentarios(idTarea)
-            backActivity()
+            presenter.eliminarComentarios(datosDevueltos.idTarea)
+            backActivity("eliminado")
             mAlertDialog.dismiss()
         }
         cancelar.setOnClickListener {
@@ -217,18 +222,24 @@ class ListComentariosFragment : Fragment(),View.OnClickListener ,DetalleTareaMVP
         }
     }
 
-    private fun backActivity() {
-        val bundle = Bundle()
-        bundle.putString("eliminar","SI")
-        bundle.putInt("position",positionTarea)
-        bundle.putInt("idTarea",idTarea)
-        val intent = Intent(activity, HomeActivity::class.java)
-        intent.putExtras(bundle)
-        startActivity(intent)
-        activity!!.overridePendingTransition(
+    internal fun backActivity(eliminar:String ="",context: Context= activity!!) {
+
+        val bundle2 = Bundle()
+        bundle2.putString("eliminar","SI")
+        bundle2.putInt("position",datosDevueltos.positionTarea)
+        bundle2.putInt("idTarea",datosDevueltos.idTarea)
+        bundle2.putBoolean("estadoOjo",datosDevueltos.estadoOjo)
+        if(eliminar=="eliminado"){
+            bundle2.putString("eliminado",eliminar)
+        }
+        val intent = Intent(context, HomeActivity::class.java)
+        intent.putExtras(bundle2)
+        context.startActivity(intent)
+        (context as Activity).overridePendingTransition(
                 R.anim.right_in, R.anim.right_out
         )
-        activity!!.finish()
+        (context as Activity).finish()
     }
+
 
 }

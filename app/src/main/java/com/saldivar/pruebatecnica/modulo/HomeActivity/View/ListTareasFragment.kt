@@ -1,8 +1,10 @@
 package com.saldivar.pruebatecnica.modulo.HomeActivity.View
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +23,7 @@ import com.saldivar.pruebatecnica.modulo.HomeActivity.mvp.HomeMVP
 import com.saldivar.pruebatecnica.modulo.HomeActivity.presenter.PresenterHome
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.RecyclerTareasListener
 import com.saldivar.pruebatecnica.modulo.HomeActivity.util.TareasAdapter
+import com.saldivar.pruebatecnica.modulo.HomeActivity.util.datosFragment
 import com.saldivar.pruebatecnica.modulo.detalleTarea.view.DetalleTareaActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list_tareas.view.*
@@ -34,7 +37,6 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
     private  lateinit var floatingBtn:FloatingActionButton
     private lateinit var adapter:TareasAdapter
     private var bundle: Bundle ?=null
-    private var estadoOjo = false
     private var listTareas = mutableListOf<Tareas>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -46,23 +48,45 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         presenter = PresenterHome(this)
         recycler = rootview.findViewById(R.id.recycler_tareas)
         bundle = activity!!.intent.extras
+        setearEstadoOjo(datosFragment.estadoOjo)
         inicio()
         return rootview
     }
 
     private fun inicio() {
+        revisarEstadoOjo()
         consultar()
         eliminarTarea()
     }
 
+    private fun revisarEstadoOjo() {
+        if(bundle?.getString("eliminar","NO") =="SI"){
+            datosFragment.estadoOjo=bundle!!.getBoolean("estadoOjo")
+            setearEstadoOjo(datosFragment.estadoOjo)
+        }
+
+    }
+
+    private fun setearEstadoOjo(estadoOjos:Boolean) {
+        if (!estadoOjos){
+            visualizadorOjo.background = resources.getDrawable(R.drawable.ic_baseline_remove_red_eye_24)
+        }else{
+            visualizadorOjo.background = resources.getDrawable(R.drawable.ic_baseline_visibility_off_24)
+        }
+    }
+
     private fun eliminarTarea() {
         if(bundle?.getString("eliminar","NO") =="SI"){
-            presenter.eliminarTarea(bundle?.getInt("idTarea")!!)
-            val positionTarea = bundle?.getInt("position")
-            mostrarEnRecyclerDelete(positionTarea!!)
-            if (listTareas.size==1){
-                toastMessage("No hay tareas disponibles")
-            }
+                if (bundle?.getString("eliminado","NO") =="eliminado"){
+                    presenter.eliminarTarea(bundle?.getInt("idTarea")!!)
+                    if (datosFragment.estadoTarea==datosFragment.estadoOjo){
+                        val  positionTarea = bundle?.getInt("position")
+                        mostrarEnRecyclerDelete(positionTarea!!)
+                    }
+                    if (listTareas.size==1){
+                        toastMessage("No hay tareas disponibles")
+                    }
+                }
         }
     }
 
@@ -71,6 +95,7 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         recycler.itemAnimator = DefaultItemAnimator()
         recycler.layoutManager = LinearLayoutManager(MyAplicationClass.ctx)
         adapter.removeItem(position)
+
     }
 
     companion object {
@@ -80,37 +105,42 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.visualizador->{
-                if (estadoOjo){
-                    estadoOjo= false
+                if (datosFragment.estadoOjo){
+                    datosFragment.estadoOjo= false
                     visualizadorOjo.background = resources.getDrawable(R.drawable.ic_baseline_remove_red_eye_24)
                 } else{
-                    estadoOjo= true
+                    datosFragment.estadoOjo= true
                     visualizadorOjo.background = resources.getDrawable(R.drawable.ic_baseline_visibility_off_24)
                 }
                 consultar()
             }
             R.id.flotanButton -> {
-                showDialogFragment(estadoOjo)
+                showDialogFragment()
             }
         }
     }
 
     private fun consultar() {
-        listTareas=presenter.consultarListTareas(estadoOjo)
-
+        listTareas=presenter.consultarListTareas(datosFragment.estadoOjo)
     }
 
     override fun mostrarEnRecycler(list: MutableList<Tareas>) {
+        if(listTareas.size!=0){
+            adapter.eliminarListaAnterior()
+        }
         recycler.setHasFixedSize(true)
         recycler.itemAnimator = DefaultItemAnimator()
         recycler.layoutManager = LinearLayoutManager(MyAplicationClass.ctx)
         adapter =TareasAdapter(object:
             RecyclerTareasListener{
             override fun onClick(tarea: Tareas, position: Int) {
+                datosFragment.estadoTarea =presenter.consultaEstadoTarea(tarea.id)
+
                 nextActivity(tarea,position)
             }
             override fun change(tarea: Tareas, position: Int) {
-                presenter.consultaEstadoTarea(tarea.id)
+                val estado =presenter.consultaEstadoTarea(tarea.id)
+                presenter.updateEstadoTarea(tarea,!estado)
             }
         })
         recycler.adapter = adapter
@@ -119,10 +149,11 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
     }
 
     override fun mostrarEnRecyclerAdd(ultimaTarea: Tareas) {
-        recycler.setHasFixedSize(true)
-        recycler.itemAnimator = DefaultItemAnimator()
-        recycler.layoutManager = LinearLayoutManager(MyAplicationClass.ctx)
-        adapter.addItem(0,ultimaTarea)
+        if (!datosFragment.estadoOjo){
+            adapter.addItem(0,ultimaTarea)
+        }else{
+            toastMessage("tarea creada")
+        }
     }
 
     private fun nextActivity(tarea:Tareas,position:Int) {
@@ -133,6 +164,7 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
         bundle.putString("tareaCreacion",tarea.creacion)
         bundle.putString("tareaFinalizacion",tarea.finalizacion)
         bundle.putInt("position",position)
+        bundle.putBoolean("estadoOjo",datosFragment.estadoOjo)
         val intent = Intent(this.activity, DetalleTareaActivity::class.java)
         intent.putExtras(bundle)
         this.activity?.startActivity(intent)
@@ -142,7 +174,7 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
     }
 
 
-    private fun showDialogFragment(estadoOjo: Boolean){
+    private fun showDialogFragment(){
         val dialog =LayoutInflater.from(this.activity!!).
         inflate(R.layout.alert_dialog_nueva_tarea,this.activity!!.findViewById(R.id.alertNuevaTarea))
         val mBuilder = AlertDialog.Builder(this.activity!!).setView(dialog)
@@ -182,7 +214,6 @@ class ListTareasFragment : Fragment(),View.OnClickListener,HomeMVP.View {
                 "Ingrese el titulo de la tarea"->{
                     toastMessage(respuesta)
                     textTitulo.text.clear()
-
                 }
                 "Ingrese el contenido de la tarea"->{
                     toastMessage(respuesta)

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import com.saldivar.pruebatecnica.db.Comentarios
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -28,8 +29,8 @@ fun fechaActual():String {
     return "${partes[0]}/${partes[1]}"
 }
 
-fun searchAutomaticSaldivar(repetitiveTask:()->Unit,successTask:()->Unit) {
-    CoroutineScope(Dispatchers.Default).async {
+fun searchAutomatic(repetitiveTask:()->Unit, successTask:()->Unit) {
+    CoroutineScope(Dispatchers.IO).async {
         while (Animation.comentarioEnProgreso.isEmpty() || Animation.comentarioEnProgreso.isBlank()) {
             delay(1500)
              repetitiveTask()

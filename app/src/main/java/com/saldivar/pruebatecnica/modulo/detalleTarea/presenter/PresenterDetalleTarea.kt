@@ -66,8 +66,6 @@ class PresenterDetalleTarea(private val view: DetalleTareaMVP.View) :DetalleTare
         model.eliminarComentarios(idTarea)
     }
 
-
-
     private fun setearDatosVista(tareaActualizada: Tareas) {
         view.setearDatosVista(tareaActualizada)
     }

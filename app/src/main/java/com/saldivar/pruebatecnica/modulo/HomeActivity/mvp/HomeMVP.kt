@@ -24,7 +24,8 @@ interface HomeMVP {
         fun consultarListTareas(estadoOjo:Boolean):MutableList<Tareas>
         fun insertarNuevaTarea(nuevaTarea:Tareas)
         fun validacion(titulo:String,contenido:String,fecha:String):String
-        fun consultaEstadoTarea(tareaID:Int)
+        fun consultaEstadoTarea(tareaID:Int):Boolean
+        fun updateEstadoTarea(tarea:Tareas, valorActulizar:Boolean)
         fun eliminarTarea(idTarea:Int)
     }
     interface View{
